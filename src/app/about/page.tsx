@@ -53,9 +53,9 @@ function TabAbout() {
       <section className="space-y-3 px-4">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-[color:var(--muted)]">What we stand for</h3>
         {pillars.map(({ icon: Icon, title, body }) => (
-          <div key={title} className="flex gap-4 rounded-2xl border border-sky-100 bg-[color:var(--card)] p-4 shadow-sm">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-100">
-              <Icon size={18} className="text-sky-700" />
+          <div key={title} className="flex gap-4 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-4 shadow-sm">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[color:var(--primary-light)]">
+              <Icon size={18} className="text-[color:var(--primary)]" />
             </div>
             <div>
               <p className="mb-1 text-sm font-semibold text-[color:var(--foreground)]">{title}</p>
@@ -69,9 +69,9 @@ function TabAbout() {
         <h3 className="text-xs font-semibold uppercase tracking-wider text-[color:var(--muted)]">Meet the team</h3>
         <div className="grid grid-cols-3 gap-3">
           {team.map(({ name, role, img }) => (
-            <div key={name} className="flex flex-col items-center gap-2 rounded-2xl border border-sky-100 bg-[color:var(--card)] p-3 text-center shadow-sm">
+            <div key={name} className="flex flex-col items-center gap-2 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-3 text-center shadow-sm">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img} alt={name} className="h-14 w-14 rounded-full border-2 border-sky-200 object-cover" />
+              <img src={img} alt={name} className="h-14 w-14 rounded-full border-2 border-[color:var(--primary-mid)] object-cover" />
               <p className="text-xs font-semibold leading-tight text-[color:var(--foreground)]">{name}</p>
               <p className="text-[10px] leading-tight text-[color:var(--muted)]">{role}</p>
             </div>
@@ -79,10 +79,10 @@ function TabAbout() {
         </div>
       </section>
 
-      <section className="mx-4 rounded-2xl bg-sky-700 px-5 py-5 text-center text-white shadow-md">
-        <p className="mb-1 font-bold">Get in touch</p>
-        <p className="mb-4 text-sm text-sky-100">Partner with us, share your story, or support our mission.</p>
-        <a href="mailto:hello@tellastory.org" className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-sky-700 hover:bg-sky-50">
+      <section className="mx-4 rounded-2xl px-5 py-5 text-center shadow-md" style={{ background: "var(--inverse)" }}>
+        <p className="mb-1 font-bold" style={{ color: "var(--inverse-fg)" }}>Get in touch</p>
+        <p className="mb-4 text-sm" style={{ color: "var(--inverse-muted)" }}>Partner with us, share your story, or support our mission.</p>
+        <a href="mailto:hello@tellastory.org" className="inline-flex items-center gap-2 rounded-full bg-[color:var(--inverse-fg)] px-5 py-2 text-sm font-semibold text-[color:var(--inverse)] hover:bg-[color:var(--primary-subtle)]">
           <Mail size={14} /> hello@tellastory.org
         </a>
       </section>
@@ -101,7 +101,7 @@ function TabGallery() {
           </div>
         ))}
       </div>
-      <Link href="/blog" className="inline-flex items-center gap-1 text-sm font-semibold text-sky-700 hover:underline">
+      <Link href="/blog" className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--primary)] hover:underline">
         See more in our blog <ArrowRight size={13} />
       </Link>
     </div>
@@ -114,9 +114,9 @@ function TabPartnership() {
       <section className="space-y-3 px-4">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-[color:var(--muted)]">Ways to partner</h3>
         {partnershipTypes.map(({ icon: Icon, title, body }) => (
-          <div key={title} className="flex gap-4 rounded-2xl border border-sky-100 bg-[color:var(--card)] p-4 shadow-sm">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50">
-              <Icon size={18} className="text-emerald-600" />
+          <div key={title} className="flex gap-4 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-4 shadow-sm">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[color:var(--success-subtle)]">
+              <Icon size={18} className="text-[color:var(--success)]" />
             </div>
             <div>
               <p className="mb-1 text-sm font-semibold text-[color:var(--foreground)]">{title}</p>
@@ -130,7 +130,7 @@ function TabPartnership() {
         <h3 className="text-xs font-semibold uppercase tracking-wider text-[color:var(--muted)]">Current partners</h3>
         <div className="grid grid-cols-2 gap-3">
           {partners.map(({ name, kind, logo }) => (
-            <div key={name} className="flex items-center gap-3 rounded-2xl border border-sky-100 bg-[color:var(--card)] p-3 shadow-sm">
+            <div key={name} className="flex items-center gap-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-3 shadow-sm">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={logo} alt={name} className="h-10 w-10 rounded-xl object-cover" />
               <div className="min-w-0">
@@ -145,7 +145,7 @@ function TabPartnership() {
       <section className="mx-4 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 px-5 py-5 text-white shadow-md">
         <p className="mb-1 font-bold">Become a partner</p>
         <p className="mb-4 text-sm text-emerald-100">Let&apos;s build something meaningful together.</p>
-        <a href="mailto:partnerships@tellastory.org" className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50">
+        <a href="mailto:partnerships@tellastory.org" className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-[color:var(--success-text)] hover:bg-[color:var(--success-subtle)]">
           <Handshake size={14} /> partnerships@tellastory.org
         </a>
       </section>
@@ -177,7 +177,7 @@ export default function AboutPage() {
       </section>
 
       {/* Tab bar */}
-      <div className="sticky top-[72px] z-10 flex gap-0 border-b border-sky-100 bg-[color:var(--background)] px-4 pt-1">
+      <div className="sticky top-[72px] z-10 flex gap-0 border-b border-[color:var(--border)] bg-[color:var(--background)] px-4 pt-1">
         {tabs.map(({ id, label }) => (
           <button
             key={id}
@@ -185,7 +185,7 @@ export default function AboutPage() {
             className={cn(
               "px-4 py-2 text-sm font-semibold transition",
               active === id
-                ? "border-b-2 border-sky-700 text-sky-700"
+                ? "border-b-2 border-[color:var(--primary)] text-[color:var(--primary)]"
                 : "text-[color:var(--muted)] hover:text-[color:var(--foreground)]"
             )}
           >

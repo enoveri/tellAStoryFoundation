@@ -11,10 +11,10 @@ export function Testimonials() {
         {testimonials.map((t) => (
           <article
             key={t.id}
-            className="flex w-72 shrink-0 flex-col gap-3 rounded-2xl border border-sky-100 bg-[color:var(--card)] p-4 shadow-sm"
+            className="flex w-72 shrink-0 flex-col gap-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-4 shadow-sm"
           >
             {/* Quote icon */}
-            <Quote size={20} className="text-sky-200" />
+            <Quote size={20} className="text-[color:var(--primary-mid)]" />
 
             {/* Quote text */}
             <p className="flex-1 text-sm leading-relaxed text-[color:var(--foreground)]/80 italic line-clamp-5">
@@ -22,19 +22,19 @@ export function Testimonials() {
             </p>
 
             {/* Author */}
-            <div className="flex items-center gap-3 border-t border-sky-50 pt-3">
+            <div className="flex items-center gap-3 border-t border-[color:var(--primary-subtle)] pt-3">
               <Image
                 src={t.avatar}
                 alt={t.name}
                 width={36}
                 height={36}
-                className="rounded-full border-2 border-sky-100 object-cover shrink-0"
+                className="rounded-full border-2 border-[color:var(--border)] object-cover shrink-0"
               />
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-[color:var(--foreground)]">{t.name}</p>
                 <p className="truncate text-xs text-[color:var(--muted)]">{t.role}</p>
               </div>
-              <span className="ml-auto shrink-0 rounded-full bg-sky-50 px-2 py-0.5 text-[10px] font-semibold text-sky-600">
+              <span className="ml-auto shrink-0 rounded-full bg-[color:var(--primary-subtle)] px-2 py-0.5 text-[10px] font-semibold text-[color:var(--primary)]">
                 {t.country}
               </span>
             </div>

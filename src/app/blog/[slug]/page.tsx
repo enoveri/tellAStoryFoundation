@@ -18,7 +18,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
 
   return (
     <MobileShell title="Blog" subtitle={blog.publishedAt}>
-      <article className="space-y-4 rounded-2xl border border-sky-100 bg-[color:var(--card)] p-4 shadow-sm">
+      <article className="space-y-4 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-4 shadow-sm">
         <div className="relative h-48 overflow-hidden rounded-xl">
           <Image src={blog.cover} alt={blog.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 420px" />
         </div>

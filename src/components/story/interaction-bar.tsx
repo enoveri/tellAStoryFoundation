@@ -14,19 +14,19 @@ export function InteractionBar({ initialLikes, commentsCount }: InteractionBarPr
   const likes = useMemo(() => initialLikes + (liked ? 1 : 0), [initialLikes, liked]);
 
   return (
-    <div className="flex items-center gap-3 border-t border-sky-100 pt-3">
+    <div className="flex items-center gap-3 border-t border-[color:var(--border)] pt-3">
       <button
         type="button"
         onClick={() => setLiked((value) => !value)}
         className={cn(
           "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition",
-          liked ? "bg-sky-100 text-sky-700" : "bg-sky-50 text-[color:var(--muted)] hover:bg-sky-100"
+          liked ? "bg-[color:var(--primary-light)] text-[color:var(--primary)]" : "bg-[color:var(--primary-subtle)] text-[color:var(--muted)] hover:bg-[color:var(--primary-light)]"
         )}
       >
         <Heart size={16} className={cn(liked ? "fill-current" : "")} /> {likes}
       </button>
 
-      <div className="inline-flex items-center gap-2 rounded-full bg-sky-50 px-3 py-1.5 text-sm font-medium text-[color:var(--muted)]">
+      <div className="inline-flex items-center gap-2 rounded-full bg-[color:var(--primary-subtle)] px-3 py-1.5 text-sm font-medium text-[color:var(--muted)]">
         <MessageCircle size={16} /> {commentsCount}
       </div>
     </div>

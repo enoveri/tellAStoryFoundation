@@ -8,7 +8,7 @@ type BlogCardProps = {
 
 export function BlogCard({ blog }: BlogCardProps) {
   return (
-    <article className="overflow-hidden rounded-2xl border border-sky-100 bg-[color:var(--card)] shadow-sm">
+    <article className="overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-sm">
       <div className="relative h-40">
         <Image src={blog.cover} alt={blog.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
       </div>
@@ -18,7 +18,7 @@ export function BlogCard({ blog }: BlogCardProps) {
         <p className="text-sm text-[color:var(--muted)]">{blog.summary}</p>
         <Link
           href={`/blog/${blog.slug}`}
-          className="inline-flex rounded-full bg-sky-700 px-4 py-1.5 text-sm font-medium text-white shadow-sm transition hover:bg-sky-800"
+          className="inline-flex rounded-full bg-[color:var(--primary)] px-4 py-1.5 text-sm font-medium text-[color:var(--primary-fg)] shadow-sm transition hover:bg-[color:var(--primary-dark)]"
         >
           Read blog
         </Link>

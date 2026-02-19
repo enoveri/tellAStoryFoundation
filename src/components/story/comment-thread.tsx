@@ -16,7 +16,7 @@ export function CommentThread({ comments }: CommentThreadProps) {
 
   if (comments.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-sky-200 p-4 text-sm text-[color:var(--muted)]">
+      <div className="rounded-2xl border border-dashed border-[color:var(--border)] p-4 text-sm text-[color:var(--muted)]">
         No comments yet. Be the first to encourage this storyteller.
       </div>
     );
@@ -27,7 +27,7 @@ export function CommentThread({ comments }: CommentThreadProps) {
       <button
         type="button"
         onClick={() => setExpanded((value) => !value)}
-        className="inline-flex items-center gap-2 rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--foreground)]"
+        className="inline-flex items-center gap-2 rounded-full bg-[color:var(--primary-light)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--foreground)]"
       >
         <MessageSquarePlus size={14} /> {expanded ? "Hide" : "Show"} conversation
       </button>
@@ -36,7 +36,7 @@ export function CommentThread({ comments }: CommentThreadProps) {
         ? comments.map((comment) => {
             const user = findUser(comment.userId);
             return (
-              <article key={comment.id} className="space-y-2 rounded-2xl border border-sky-100 bg-white p-3">
+              <article key={comment.id} className="space-y-2 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-3">
                 <div className="flex items-center gap-2">
                   <Image
                     src={user?.avatar ?? "https://i.pravatar.cc/100"}

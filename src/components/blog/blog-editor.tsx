@@ -12,34 +12,34 @@ export function BlogEditor() {
 
   return (
     <div className="space-y-4">
-      <section className="space-y-3 rounded-2xl border border-sky-100 bg-[color:var(--card)] p-4 shadow-sm">
+      <section className="space-y-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-4 shadow-sm">
         <h2 className="text-base font-semibold text-[color:var(--foreground)]">Compose blog</h2>
         <input
           value={title}
           onChange={(event) => setTitle(event.target.value)}
-          className="w-full rounded-xl border border-sky-200 px-3 py-2 text-sm outline-none ring-sky-200 focus:ring"
+          className="w-full rounded-xl border border-[color:var(--border)] px-3 py-2 text-sm outline-none ring-[color:var(--border)] focus:ring"
           placeholder="Blog title"
         />
         <textarea
           value={summary}
           onChange={(event) => setSummary(event.target.value)}
           rows={2}
-          className="w-full rounded-xl border border-sky-200 px-3 py-2 text-sm outline-none ring-sky-200 focus:ring"
+          className="w-full rounded-xl border border-[color:var(--border)] px-3 py-2 text-sm outline-none ring-[color:var(--border)] focus:ring"
           placeholder="Short summary"
         />
         <textarea
           value={markdown}
           onChange={(event) => setMarkdown(event.target.value)}
           rows={10}
-          className="w-full rounded-xl border border-sky-200 px-3 py-2 text-sm outline-none ring-sky-200 focus:ring"
+          className="w-full rounded-xl border border-[color:var(--border)] px-3 py-2 text-sm outline-none ring-[color:var(--border)] focus:ring"
           placeholder="Write markdown content"
         />
-        <button className="w-full rounded-xl bg-sky-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-800">
+        <button className="w-full rounded-xl bg-[color:var(--primary)] px-4 py-2 text-sm font-semibold text-[color:var(--primary-fg)] shadow-sm transition hover:bg-[color:var(--primary-dark)]">
           Save Draft (UI demo)
         </button>
       </section>
 
-      <section className="space-y-2 rounded-2xl border border-sky-100 bg-white p-4">
+      <section className="space-y-2 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--muted)]">Live preview</p>
         <h3 className="text-lg font-semibold text-[color:var(--foreground)]">{title}</h3>
         <p className="text-sm text-[color:var(--muted)]">{summary}</p>

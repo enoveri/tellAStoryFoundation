@@ -12,7 +12,7 @@ export function StoryCard({ story }: StoryCardProps) {
   const author = findUser(story.authorId);
 
   return (
-    <article className="space-y-3 rounded-2xl border border-sky-100 bg-[color:var(--card)] p-3 shadow-sm">
+    <article className="space-y-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-3 shadow-sm">
       <div className="flex items-center justify-between text-xs text-[color:var(--muted)]">
         <span className="font-semibold text-[color:var(--foreground)]">{author?.name ?? "Anonymous"}</span>
         <span>{story.createdAt}</span>
@@ -29,7 +29,7 @@ export function StoryCard({ story }: StoryCardProps) {
 
       <div className="flex flex-wrap gap-2">
         {story.tags.map((tag) => (
-          <span key={tag} className="rounded-full bg-sky-50 px-2 py-0.5 text-xs font-medium text-[color:var(--muted)]">
+          <span key={tag} className="rounded-full bg-[color:var(--primary-subtle)] px-2 py-0.5 text-xs font-medium text-[color:var(--muted)]">
             #{tag}
           </span>
         ))}
@@ -38,7 +38,7 @@ export function StoryCard({ story }: StoryCardProps) {
       <div className="flex items-center justify-between">
         <Link
           href={`/stories/${story.id}`}
-          className="rounded-full bg-sky-700 px-4 py-1.5 text-sm font-medium text-white shadow-sm transition hover:bg-sky-800"
+          className="rounded-full bg-[color:var(--primary)] px-4 py-1.5 text-sm font-medium text-[color:var(--primary-fg)] shadow-sm transition hover:bg-[color:var(--primary-dark)]"
         >
           Read story
         </Link>

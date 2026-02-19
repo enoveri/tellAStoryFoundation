@@ -8,7 +8,7 @@ type ReplyItemProps = {
 
 export function ReplyItem({ reply, user }: ReplyItemProps) {
   return (
-    <article className="ml-10 rounded-xl border border-sky-100 bg-white p-3">
+    <article className="ml-10 rounded-xl border border-[color:var(--border)] bg-[color:var(--card)] p-3">
       <div className="mb-2 flex items-center gap-2">
         <Image
           src={user?.avatar ?? "https://i.pravatar.cc/100"}

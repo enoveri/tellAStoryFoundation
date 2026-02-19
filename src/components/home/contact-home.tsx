@@ -1,19 +1,35 @@
 import { Mail, Instagram, Twitter, Facebook } from "lucide-react";
 
 const socials = [
-  { icon: Instagram, label: "Instagram", href: "https://instagram.com/tellastory", color: "hover:text-pink-400" },
-  { icon: Twitter,   label: "Twitter/X", href: "https://twitter.com/tellastory",   color: "hover:text-sky-300" },
-  { icon: Facebook,  label: "Facebook",  href: "https://facebook.com/tellastory",  color: "hover:text-blue-300" },
+  { icon: Instagram, label: "Instagram", href: "https://instagram.com/tellastory" },
+  { icon: Twitter,   label: "Twitter/X", href: "https://twitter.com/tellastory" },
+  { icon: Facebook,  label: "Facebook",  href: "https://facebook.com/tellastory" },
 ];
 
 export function ContactHome() {
   return (
-    <section className="mx-4 mb-2 overflow-hidden rounded-3xl bg-sky-800 text-white shadow-lg">
+    <section
+      className="mx-4 mb-2 overflow-hidden rounded-3xl shadow-lg"
+      style={{ background: "var(--inverse)" }}
+    >
       {/* Top */}
       <div className="space-y-2 px-5 pt-6 pb-4">
-        <p className="text-xs font-bold uppercase tracking-widest text-sky-300">Get involved</p>
-        <h2 className="text-xl font-bold leading-snug text-white">Ready to share your story?</h2>
-        <p className="text-sm leading-relaxed text-white/80">
+        <p
+          className="text-xs font-bold uppercase tracking-widest"
+          style={{ color: "var(--primary-mid)" }}
+        >
+          Get involved
+        </p>
+        <h2
+          className="text-xl font-bold leading-snug"
+          style={{ color: "var(--inverse-fg)" }}
+        >
+          Ready to share your story?
+        </h2>
+        <p
+          className="text-sm leading-relaxed"
+          style={{ color: "var(--inverse-muted)" }}
+        >
           Whether you want to write, volunteer, partner, or just say hello — we would love to hear from you.
         </p>
       </div>
@@ -22,33 +38,44 @@ export function ContactHome() {
       <div className="flex gap-2 px-5 pb-5">
         <a
           href="mailto:hello@tellastory.org"
-          className="flex flex-1 items-center justify-center gap-2 rounded-full bg-white py-2.5 text-sm font-semibold text-sky-800 shadow-sm transition hover:bg-sky-50"
+          className="flex flex-1 items-center justify-center gap-2 rounded-full py-2.5 text-sm font-semibold shadow-sm transition"
+          style={{ background: "var(--inverse-fg)", color: "var(--inverse)" }}
         >
           <Mail size={14} />
           Email us
         </a>
         <a
           href="/write"
-          className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-white/50 py-2.5 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
+          className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 py-2.5 text-sm font-semibold transition"
+          style={{
+            borderColor: "var(--inverse-border)",
+            color: "var(--inverse-fg)",
+          }}
         >
           Write a story
         </a>
       </div>
 
       {/* Divider */}
-      <div className="mx-5 border-t border-white/20" />
+      <div className="mx-5" style={{ borderTop: "1px solid var(--inverse-border)" }} />
 
       {/* Socials */}
       <div className="flex items-center gap-4 px-5 py-4">
-        <span className="text-xs font-semibold text-white/60">Follow us</span>
-        {socials.map(({ icon: Icon, label, href, color }) => (
+        <span
+          className="text-xs font-semibold"
+          style={{ color: "var(--inverse-muted)" }}
+        >
+          Follow us
+        </span>
+        {socials.map(({ icon: Icon, label, href }) => (
           <a
             key={label}
             href={href}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={label}
-            className={`text-white/70 transition ${color}`}
+            className="transition hover:opacity-100"
+            style={{ color: "var(--inverse-muted)" }}
           >
             <Icon size={20} />
           </a>
@@ -57,3 +84,4 @@ export function ContactHome() {
     </section>
   );
 }
+

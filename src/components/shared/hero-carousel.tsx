@@ -28,7 +28,7 @@ function SlideHero() {
   return (
     <div className="flex h-full flex-col justify-between p-5">
       <div>
-        <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-sky-900">
+        <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--primary-text)]">
           <HeartHandshake size={13} /> Tell A Story NGO
         </div>
         <h2 className="text-2xl font-bold leading-snug text-[color:var(--foreground)]">
@@ -39,10 +39,10 @@ function SlideHero() {
         </p>
       </div>
       <div className="mt-4 flex gap-2">
-        <Link href="/feed" className="inline-flex items-center gap-1.5 rounded-full bg-sky-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-800">
+        <Link href="/feed" className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--primary)] px-4 py-2 text-sm font-semibold text-[color:var(--primary-fg)] shadow-sm hover:bg-[color:var(--primary-dark)]">
           Explore stories <ArrowRight size={14} />
         </Link>
-        <Link href="/write" className="inline-flex rounded-full border border-sky-700/40 bg-white/60 px-4 py-2 text-sm font-semibold text-sky-900 hover:bg-white/80">
+        <Link href="/write" className="inline-flex rounded-full border border-[color:var(--primary)] bg-white/60 px-4 py-2 text-sm font-semibold text-[color:var(--primary-text)] hover:bg-white/80">
           Write yours
         </Link>
       </div>
@@ -53,7 +53,7 @@ function SlideHero() {
 function SlideGallery() {
   return (
     <div className="flex h-full flex-col p-5">
-      <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-sky-700">Our Gallery</p>
+      <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-[color:var(--primary)]">Our Gallery</p>
       <h2 className="mb-3 text-lg font-bold text-[color:var(--foreground)]">Moments that matter</h2>
       <div className="grid flex-1 grid-cols-2 gap-2">
         {galleryImages.map(({ src, alt }) => (
@@ -62,7 +62,7 @@ function SlideGallery() {
           </div>
         ))}
       </div>
-      <Link href="/blog" className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-sky-700 hover:underline">
+      <Link href="/blog" className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--primary)] hover:underline">
         View full gallery <ArrowRight size={13} />
       </Link>
     </div>
@@ -72,18 +72,18 @@ function SlideGallery() {
 function SlideStats() {
   return (
     <div className="flex h-full flex-col justify-center p-5">
-      <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-sky-700">Our Impact</p>
+      <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-[color:var(--primary)]">Our Impact</p>
       <h2 className="mb-4 text-lg font-bold text-[color:var(--foreground)]">Stories change lives — the numbers prove it</h2>
       <div className="grid grid-cols-2 gap-3">
         {stats.map(({ icon: Icon, value, label }) => (
           <div key={label} className="flex flex-col items-center rounded-2xl bg-white/60 py-3 px-2 text-center shadow-sm">
-            <Icon size={18} className="mb-1 text-sky-600" />
-            <span className="text-xl font-extrabold text-sky-700">{value}</span>
+            <Icon size={18} className="mb-1 text-[color:var(--primary)]" />
+            <span className="text-xl font-extrabold text-[color:var(--primary)]">{value}</span>
             <span className="mt-0.5 text-xs text-[color:var(--muted)]">{label}</span>
           </div>
         ))}
       </div>
-      <Link href="/about" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-sky-700 hover:underline">
+      <Link href="/about" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--primary)] hover:underline">
         Learn more about us <ArrowRight size={13} />
       </Link>
     </div>
@@ -94,8 +94,8 @@ function SlideFounder() {
   return (
     <div className="flex h-full flex-col justify-between p-5">
       <div>
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-sky-700">From Our Founder</p>
-        <Quote size={24} className="mb-2 text-sky-300" />
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--primary)]">From Our Founder</p>
+        <Quote size={24} className="mb-2 text-[color:var(--primary-mid)]" />
         <p className="text-sm leading-relaxed text-[color:var(--foreground)]/90 italic">
           "I started Tell A Story Foundation because I believe every person carries a story worth hearing.
           When we listen to each other — truly listen — we begin to see our shared humanity.
@@ -108,13 +108,13 @@ function SlideFounder() {
           alt="Founder"
           width={44}
           height={44}
-          className="rounded-full border-2 border-sky-200 object-cover"
+          className="rounded-full border-2 border-[color:var(--border)] object-cover"
         />
         <div>
           <p className="text-sm font-semibold text-[color:var(--foreground)]">Amara Nwosu</p>
           <p className="text-xs text-[color:var(--muted)]">Founder & Executive Director</p>
         </div>
-        <Link href="/about" className="ml-auto inline-flex items-center gap-1 rounded-full bg-sky-100 px-3 py-1.5 text-xs font-semibold text-sky-700 hover:bg-sky-200">
+        <Link href="/about" className="ml-auto inline-flex items-center gap-1 rounded-full bg-[color:var(--primary-light)] px-3 py-1.5 text-xs font-semibold text-[color:var(--primary)] hover:bg-[color:var(--primary-mid)]">
           Meet the team <ArrowRight size={12} />
         </Link>
       </div>
@@ -184,7 +184,7 @@ export function HeroCarousel() {
             aria-label={`Go to slide ${i + 1}`}
             className={cn(
               "h-1.5 rounded-full transition-all duration-300",
-              i === active ? "w-5 bg-sky-700" : "w-1.5 bg-sky-700/30"
+              i === active ? "w-5 bg-[color:var(--primary)]" : "w-1.5 bg-[color:var(--primary-light)]"
             )}
           />
         ))}
