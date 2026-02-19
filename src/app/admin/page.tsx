@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Users, BookOpen, PenSquare, ShieldCheck, CalendarDays, ChevronRight, Sparkles } from "lucide-react";
+import { Users, BookOpen, PenSquare, ShieldCheck, CalendarDays, ChevronRight, Sparkles, Info } from "lucide-react";
 import { MobileShell } from "@/components/shared/mobile-shell";
 import { users, stories, blogs, events } from "@/lib/mock-data";
 import { CURRENT_USER } from "@/lib/session";
@@ -92,8 +92,9 @@ export default function AdminPage() {
           <h2 className="text-xs font-bold uppercase tracking-wider" style={{ color: "var(--muted)" }}>Quick Actions</h2>
           <Action icon={PenSquare}    label="Write New Blog Post"  description="Publish a blog as the organisation" href="/blog/new"      accent />
           <Action icon={BookOpen}     label="Manage Blogs"         description="Edit or remove existing posts"       href="/admin/blogs" />
+          <Action icon={Info}         label="Edit About Page"       description="Update mission, team, gallery &amp; partners" href="/admin/about" />
           <Action icon={Users}        label="Manage Users"         description={`${memberCount} members registered`}  href="/admin/users" />
-          <Action icon={CalendarDays} label="View Events"          description="Upcoming workshops & webinars"       href="/events" />
+          <Action icon={CalendarDays} label="View Events"          description="Upcoming workshops &amp; webinars"       href="/events" />
         </section>
 
         {/* ── Recent users ─────────────────────────────────────────── */}
