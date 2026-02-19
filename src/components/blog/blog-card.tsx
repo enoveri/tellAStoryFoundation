@@ -18,7 +18,7 @@ export function BlogCard({ blog }: BlogCardProps) {
         <p className="text-sm text-[color:var(--muted)]">{blog.summary}</p>
         <Link
           href={`/blog/${blog.slug}`}
-          className="inline-flex rounded-full bg-[color:var(--foreground)] px-4 py-1.5 text-sm font-medium text-white transition hover:opacity-90"
+          className="inline-flex rounded-full bg-sky-700 px-4 py-1.5 text-sm font-medium text-white shadow-sm transition hover:bg-sky-800"
         >
           Read blog
         </Link>

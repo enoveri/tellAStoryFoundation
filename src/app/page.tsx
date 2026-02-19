@@ -21,11 +21,11 @@ export default function Home() {
           <div className="mt-4 flex gap-2">
             <Link
               href="/feed"
-              className="inline-flex items-center gap-2 rounded-full bg-[color:var(--foreground)] px-4 py-2 text-sm font-semibold text-white"
+              className="inline-flex items-center gap-2 rounded-full bg-sky-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-800"
             >
               Explore stories <ArrowRight size={16} />
             </Link>
-            <Link href="/write" className="inline-flex rounded-full border border-[color:var(--foreground)]/20 px-4 py-2 text-sm font-semibold">
+            <Link href="/write" className="inline-flex rounded-full border border-sky-700/40 bg-white/60 px-4 py-2 text-sm font-semibold text-sky-900 hover:bg-white/80">
               Write yours
             </Link>
           </div>

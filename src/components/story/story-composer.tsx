@@ -68,7 +68,7 @@ export function StoryComposer() {
         {errors.body ? <p className="mt-1 text-xs text-rose-500">{errors.body.message}</p> : null}
       </div>
 
-      <button type="submit" className="w-full rounded-xl bg-[color:var(--foreground)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90">
+      <button type="submit" className="w-full rounded-xl bg-sky-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-800">
         Publish (UI demo)
       </button>
 

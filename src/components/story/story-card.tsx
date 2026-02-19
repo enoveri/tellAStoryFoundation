@@ -38,7 +38,7 @@ export function StoryCard({ story }: StoryCardProps) {
       <div className="flex items-center justify-between">
         <Link
           href={`/stories/${story.id}`}
-          className="rounded-full bg-[color:var(--foreground)] px-4 py-1.5 text-sm font-medium text-white transition hover:opacity-90"
+          className="rounded-full bg-sky-700 px-4 py-1.5 text-sm font-medium text-white shadow-sm transition hover:bg-sky-800"
         >
           Read story
         </Link>

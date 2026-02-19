@@ -34,7 +34,7 @@ export function BlogEditor() {
           className="w-full rounded-xl border border-sky-200 px-3 py-2 text-sm outline-none ring-sky-200 focus:ring"
           placeholder="Write markdown content"
         />
-        <button className="w-full rounded-xl bg-[color:var(--foreground)] px-4 py-2 text-sm font-semibold text-white">
+        <button className="w-full rounded-xl bg-sky-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-800">
           Save Draft (UI demo)
         </button>
       </section>
