@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Info } from "lucide-react";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
 import { cn } from "@/lib/utils";
 import { CURRENT_USER } from "@/lib/session";
@@ -36,6 +37,16 @@ export function TopBar({ title, subtitle }: TopBarProps) {
         <h1 className="truncate text-sm font-semibold leading-tight text-[color:var(--foreground)]">{title}</h1>
         {subtitle ? <p className="truncate text-xs text-[color:var(--muted)]">{subtitle}</p> : null}
       </div>
+
+      {/* About link */}
+      <Link
+        href="/about"
+        className="flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold transition hover:opacity-80"
+        style={{ borderColor: "var(--primary)", color: "var(--primary)", background: "var(--primary-light)" }}
+        title="About Tell A Story"
+      >
+        <Info size={13} /> About
+      </Link>
 
       {/* Profile avatar */}
       <Link href="/profile" className="shrink-0" title={CURRENT_USER.name}>
