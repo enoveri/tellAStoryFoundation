@@ -15,7 +15,7 @@ export function TopBar({ title, subtitle }: TopBarProps) {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-20 flex items-center gap-3 border-b border-sky-100/90 bg-[color:var(--card)]/95 px-4 py-1 backdrop-blur transition-transform duration-300",
+        "fixed inset-x-0 top-0 z-20 flex items-center gap-3 border-b border-sky-100/90 bg-[color:var(--card)]/95 px-4 py-0 backdrop-blur transition-transform duration-300",
         dir === "down" ? "-translate-y-full" : "translate-y-0"
       )}
     >
@@ -23,8 +23,8 @@ export function TopBar({ title, subtitle }: TopBarProps) {
       <Image
         src="/tas-logo.png"
         alt="Tell A Story Foundation"
-        width={56}
-        height={56}
+        width={72}
+        height={72}
         priority
         className="shrink-0"
       />
