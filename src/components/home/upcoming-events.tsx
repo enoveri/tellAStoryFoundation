@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { CalendarDays, Clock, MapPin, ArrowRight } from "lucide-react";
+import { CalendarDays, Clock, MapPin, ArrowRight, UserPlus } from "lucide-react";
 import { events } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
@@ -56,6 +56,11 @@ export function UpcomingEvents() {
                   <span className="truncate">{event.location}</span>
                 </div>
               </div>
+
+              {/* Register button */}
+              <button className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl bg-sky-700 py-1.5 text-xs font-semibold text-white transition hover:bg-sky-800">
+                <UserPlus size={12} /> Register
+              </button>
             </div>
           </article>
         ))}
