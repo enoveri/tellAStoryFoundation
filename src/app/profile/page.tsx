@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Settings, LogOut, ShieldCheck, PenSquare, BookOpen, Heart, ChevronRight } from "lucide-react";
+import { Settings, LogOut, ShieldCheck, PenSquare, BookOpen, Heart, ChevronRight, Info } from "lucide-react";
 import { MobileShell } from "@/components/shared/mobile-shell";
 import { StoryCard } from "@/components/story/story-card";
 import { CURRENT_USER } from "@/lib/session";
@@ -147,6 +147,24 @@ export default function ProfilePage() {
             <div className="flex items-center gap-3">
               <Settings size={18} style={{ color: "var(--muted)" }} />
               <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>Account Settings</span>
+            </div>
+            <ChevronRight size={16} style={{ color: "var(--muted)" }} />
+          </Link>
+        </section>
+
+        {/* ── About the NGO ─────────────────────────────────────────── */}
+        <section className="px-4 pb-4">
+          <Link
+            href="/about"
+            className="flex items-center justify-between rounded-2xl border p-4"
+            style={{ borderColor: "var(--border)", background: "var(--card)" }}
+          >
+            <div className="flex items-center gap-3">
+              <Info size={18} style={{ color: "var(--primary)" }} />
+              <div>
+                <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>About Tell A Story</span>
+                <p className="text-xs" style={{ color: "var(--muted)" }}>Mission, team, partners &amp; gallery</p>
+              </div>
             </div>
             <ChevronRight size={16} style={{ color: "var(--muted)" }} />
           </Link>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Users, BookOpen, Globe, Mail, ArrowRight, Handshake } from "lucide-react";
+import { Heart, Users, BookOpen, Globe, Mail, ArrowRight, Handshake, ArrowLeft } from "lucide-react";
 import { MobileShell } from "@/components/shared/mobile-shell";
 import { cn } from "@/lib/utils";
 
@@ -168,6 +168,13 @@ export default function AboutPage() {
 
   return (
     <MobileShell title="About Us" subtitle="Tell A Story Foundation">
+      {/* Back to profile */}
+      <div className="px-4 pt-1">
+        <Link href="/profile" className="inline-flex items-center gap-1 text-sm font-medium" style={{ color: "var(--primary)" }}>
+          <ArrowLeft size={15} /> Back to Profile
+        </Link>
+      </div>
+
       {/* Hero */}
       <section className="bg-gradient-to-br from-sky-100 via-cyan-50 to-white px-5 py-6 text-center">
         <h2 className="mb-1 text-xl font-bold text-[color:var(--foreground)]">Creating Change Through Stories</h2>
