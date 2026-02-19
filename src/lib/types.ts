@@ -2,7 +2,9 @@ export type User = {
   id: string;
   name: string;
   avatar: string;
-  role?: "member" | "ngo";
+  bio?: string;
+  joinedAt?: string;
+  role?: "member" | "ngo" | "admin";
 };
 
 export type Reply = {

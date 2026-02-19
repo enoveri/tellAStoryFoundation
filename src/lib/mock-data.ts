@@ -1,9 +1,13 @@
 import type { Blog, Event, Story, Testimonial, User } from "@/lib/types";
 
 export const users: User[] = [
-  { id: "u1", name: "Amina", avatar: "https://i.pravatar.cc/100?img=12", role: "ngo" },
-  { id: "u2", name: "Kelvin", avatar: "https://i.pravatar.cc/100?img=33", role: "member" },
-  { id: "u3", name: "Maya", avatar: "https://i.pravatar.cc/100?img=41", role: "member" },
+  { id: "u1", name: "Amara Nwosu",   avatar: "https://i.pravatar.cc/150?img=47", role: "admin",  bio: "Founder & Executive Director", joinedAt: "Jan 2024" },
+  { id: "u2", name: "Kelvin Osei",    avatar: "https://i.pravatar.cc/100?img=33", role: "member", bio: "Storyteller from Accra",          joinedAt: "Mar 2024" },
+  { id: "u3", name: "Maya Patel",     avatar: "https://i.pravatar.cc/100?img=41", role: "member", bio: "Writer & community healer",       joinedAt: "Apr 2024" },
+  { id: "u4", name: "Fatima Hassan",  avatar: "https://i.pravatar.cc/100?img=5",  role: "member", bio: "Youth advocate, Lagos",           joinedAt: "Jun 2024" },
+  { id: "u5", name: "David Okonkwo",  avatar: "https://i.pravatar.cc/100?img=8",  role: "member", bio: "Poet and educator",               joinedAt: "Jul 2024" },
+  { id: "u6", name: "Zara Ahmed",     avatar: "https://i.pravatar.cc/100?img=21", role: "member", bio: "Safe-space facilitator",          joinedAt: "Sep 2024" },
+  { id: "u7", name: "Samuel Bah",     avatar: "https://i.pravatar.cc/100?img=15", role: "ngo",    bio: "NGO partner coordinator",       joinedAt: "Oct 2024" },
 ];
 
 export const stories: Story[] = [
@@ -63,6 +67,10 @@ export function findStory(storyId: string) {
 
 export function findBlog(slug: string) {
   return blogs.find((blog) => blog.slug === slug);
+}
+
+export function findEvent(eventId: string) {
+  return events.find((event) => event.id === eventId);
 }
 
 export const events: Event[] = [

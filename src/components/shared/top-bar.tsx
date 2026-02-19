@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
 import { cn } from "@/lib/utils";
 
@@ -36,13 +37,15 @@ export function TopBar({ title, subtitle }: TopBarProps) {
       </div>
 
       {/* Profile avatar */}
-      <Image
-        src="https://i.pravatar.cc/150?img=47"
-        alt="My profile"
-        width={34}
-        height={34}
-        className="shrink-0 rounded-full border-2 border-[color:var(--primary-mid)] object-cover"
-      />
+      <Link href="/profile" className="shrink-0">
+        <Image
+          src="https://i.pravatar.cc/150?img=47"
+          alt="My profile"
+          width={34}
+          height={34}
+          className="rounded-full border-2 border-[color:var(--primary-mid)] object-cover"
+        />
+      </Link>
     </header>
   );
 }

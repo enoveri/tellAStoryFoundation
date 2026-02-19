@@ -16,7 +16,7 @@ export function UpcomingEvents() {
     <section className="space-y-3 px-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-[color:var(--foreground)]">Upcoming events</h2>
-        <Link href="/about" className="text-sm font-medium text-[color:var(--muted)] hover:text-[color:var(--primary)]">
+        <Link href="/events" className="text-sm font-medium text-[color:var(--muted)] hover:text-[color:var(--primary)]">
           View all
         </Link>
       </div>
@@ -58,16 +58,16 @@ export function UpcomingEvents() {
               </div>
 
               {/* Register button */}
-              <button className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl bg-[color:var(--primary)] py-1.5 text-xs font-semibold text-[color:var(--primary-fg)] transition hover:bg-[color:var(--primary-dark)]">
+              <Link href={`/events/${event.id}`} className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl bg-[color:var(--primary)] py-1.5 text-xs font-semibold text-[color:var(--primary-fg)] transition hover:bg-[color:var(--primary-dark)]">
                 <UserPlus size={12} /> Register
-              </button>
+              </Link>
             </div>
           </article>
         ))}
 
         {/* View all card */}
         <Link
-          href="/about"
+          href="/events"
           className="flex w-32 shrink-0 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-[color:var(--border)] bg-[color:var(--primary-subtle)] text-center text-xs font-semibold text-[color:var(--primary)] hover:bg-[color:var(--primary-light)]"
         >
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[color:var(--primary-light)]">
