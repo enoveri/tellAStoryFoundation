@@ -38,7 +38,27 @@ export type Blog = {
   slug: string;
   title: string;
   summary: string;
-  content: string;
   cover: string;
   publishedAt: string;
+  content: string;
+};
+
+export type Event = {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  location: string;
+  type: "workshop" | "webinar" | "community" | "fundraiser";
+  image: string;
+};
+
+export type Testimonial = {
+  id: string;
+  name: string;
+  role: string;
+  avatar: string;
+  quote: string;
+  country: string;
 };

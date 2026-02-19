@@ -1,4 +1,4 @@
-import type { Blog, Story, User } from "@/lib/types";
+import type { Blog, Event, Story, Testimonial, User } from "@/lib/types";
 
 export const users: User[] = [
   { id: "u1", name: "Amina", avatar: "https://i.pravatar.cc/100?img=12", role: "ngo" },
@@ -64,3 +64,63 @@ export function findStory(storyId: string) {
 export function findBlog(slug: string) {
   return blogs.find((blog) => blog.slug === slug);
 }
+
+export const events: Event[] = [
+  {
+    id: "e1",
+    title: "Community Story Circle",
+    description: "Join our monthly gathering where members share personal stories in a safe, facilitated space.",
+    date: "Mar 8, 2026",
+    time: "10:00 AM",
+    location: "Accra Community Hall, Ghana",
+    type: "community",
+    image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=250&fit=crop",
+  },
+  {
+    id: "e2",
+    title: "Storytelling for Healing — Workshop",
+    description: "A hands-on workshop exploring how writing your story can be a powerful tool for mental wellness.",
+    date: "Mar 15, 2026",
+    time: "2:00 PM",
+    location: "Online (Zoom)",
+    type: "workshop",
+    image: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=400&h=250&fit=crop",
+  },
+  {
+    id: "e3",
+    title: "Annual Fundraiser Gala",
+    description: "An evening of stories, music, and celebration to raise funds for our next chapter of programmes.",
+    date: "Apr 3, 2026",
+    time: "6:30 PM",
+    location: "Lagos, Nigeria",
+    type: "fundraiser",
+    image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&h=250&fit=crop",
+  },
+];
+
+export const testimonials: Testimonial[] = [
+  {
+    id: "t1",
+    name: "Fatima Yusuf",
+    role: "Community member, Kano",
+    avatar: "https://i.pravatar.cc/150?img=5",
+    quote: "Before Tell A Story I thought my life was too ordinary to matter. Now I know every ordinary life is extraordinary. My story was published and three strangers said it changed their week.",
+    country: "Nigeria",
+  },
+  {
+    id: "t2",
+    name: "David Mensah",
+    role: "Youth facilitator, Accra",
+    avatar: "https://i.pravatar.cc/150?img=15",
+    quote: "I use the workshops with my youth group every month. The transformation in confidence and empathy among teenagers is something I could not have produced with any other tool.",
+    country: "Ghana",
+  },
+  {
+    id: "t3",
+    name: "Priya Nair",
+    role: "Survivor & storyteller",
+    avatar: "https://i.pravatar.cc/150?img=29",
+    quote: "Writing my story here was the first time I chose my own narrative. The comments from strangers who felt seen by my words healed something in me I didn't know was broken.",
+    country: "Kenya",
+  },
+];
