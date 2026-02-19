@@ -1,17 +1,21 @@
 import { MobileShell } from "@/components/shared/mobile-shell";
 import { BlogCard } from "@/components/blog/blog-card";
 import { blogs } from "@/lib/mock-data";
+import { CURRENT_USER } from "@/lib/session";
 import Link from "next/link";
 
 export default function BlogPage() {
+  const isAdmin = CURRENT_USER.role === "admin";
   return (
     <MobileShell title="Tell A Story Blogs" subtitle="Official updates and insights from the NGO.">
-      <Link
-        href="/blog/new"
-        className="inline-flex w-full items-center justify-center rounded-xl bg-[color:var(--foreground)] px-4 py-2 text-sm font-semibold text-white"
-      >
-        Write NGO Blog
-      </Link>
+      {isAdmin && (
+        <Link
+          href="/blog/new"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[color:var(--foreground)] px-4 py-2 text-sm font-semibold text-white shadow-sm"
+        >
+          ✏️ Write NGO Blog
+        </Link>
+      )}
       {blogs.map((blog) => (
         <BlogCard key={blog.id} blog={blog} />
       ))}

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
 import { cn } from "@/lib/utils";
+import { CURRENT_USER } from "@/lib/session";
 
 type TopBarProps = {
   title: string;
@@ -37,10 +38,10 @@ export function TopBar({ title, subtitle }: TopBarProps) {
       </div>
 
       {/* Profile avatar */}
-      <Link href="/profile" className="shrink-0">
+      <Link href="/profile" className="shrink-0" title={CURRENT_USER.name}>
         <Image
-          src="https://i.pravatar.cc/150?img=47"
-          alt="My profile"
+          src={CURRENT_USER.avatar}
+          alt={CURRENT_USER.name}
           width={34}
           height={34}
           className="rounded-full border-2 border-[color:var(--primary-mid)] object-cover"

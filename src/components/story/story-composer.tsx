@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,6 +18,7 @@ export function StoryComposer() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitSuccessful },
   } = useForm<StoryFormValues>({
     resolver: zodResolver(storySchema),
@@ -73,9 +75,18 @@ export function StoryComposer() {
       </button>
 
       {isSubmitSuccessful ? (
-        <p className="rounded-lg bg-[color:var(--success-subtle)] px-3 py-2 text-xs text-[color:var(--success-text)]">
-          Great! Story captured in UI mode. We will connect real save later.
-        </p>
+        <div className="space-y-2 rounded-xl border border-[color:var(--border)] bg-[color:var(--success-subtle)] p-4">
+          <p className="text-sm font-semibold" style={{ color: "var(--success-text)" }}>Story submitted! 🎉</p>
+          <p className="text-xs" style={{ color: "var(--success-text)" }}>Your story has been captured. It will go live once publishing is connected.</p>
+          <div className="flex gap-3 pt-1">
+            <Link href="/feed" className="rounded-full px-4 py-1.5 text-xs font-semibold" style={{ background: "var(--primary)", color: "var(--primary-fg)" }}>
+              View community stories
+            </Link>
+            <button type="button" onClick={() => reset()} className="rounded-full border px-4 py-1.5 text-xs font-semibold" style={{ borderColor: "var(--border)", color: "var(--foreground)" }}>
+              Write another
+            </button>
+          </div>
+        </div>
       ) : null}
     </form>
   );
