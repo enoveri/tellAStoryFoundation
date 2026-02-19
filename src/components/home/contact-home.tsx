@@ -1,4 +1,4 @@
-import { Mail, Instagram, Twitter, Facebook } from "lucide-react";
+import { Mail, MessageCircle, Instagram, Twitter, Facebook } from "lucide-react";
 
 const socials = [
   { icon: Instagram, label: "Instagram", href: "https://instagram.com/tellastory" },
@@ -24,7 +24,7 @@ export function ContactHome() {
           className="text-xl font-bold leading-snug"
           style={{ color: "var(--inverse-fg)" }}
         >
-          Ready to share your story?
+          We&rsquo;d love to hear from you.
         </h2>
         <p
           className="text-sm leading-relaxed"
@@ -45,14 +45,17 @@ export function ContactHome() {
           Email us
         </a>
         <a
-          href="/write"
+          href="https://wa.me/256700277374"
+          target="_blank"
+          rel="noopener noreferrer"
           className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 py-2.5 text-sm font-semibold transition"
           style={{
             borderColor: "var(--inverse-border)",
             color: "var(--inverse-fg)",
           }}
         >
-          Write a story
+          <MessageCircle size={14} />
+          WhatsApp us
         </a>
       </div>
 
