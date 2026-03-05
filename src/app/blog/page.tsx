@@ -1,11 +1,12 @@
 import { MobileShell } from "@/components/shared/mobile-shell";
 import { BlogCard } from "@/components/blog/blog-card";
 import { blogs } from "@/lib/mock-data";
-import { CURRENT_USER } from "@/lib/session";
+import { getCurrentUserProfile } from "@/lib/auth";
 import Link from "next/link";
 
-export default function BlogPage() {
-  const isAdmin = CURRENT_USER.role === "admin";
+export default async function BlogPage() {
+  const currentUser = await getCurrentUserProfile();
+  const isAdmin = currentUser?.role === "admin";
   return (
     <MobileShell
       title="Tell A Story Blogs"

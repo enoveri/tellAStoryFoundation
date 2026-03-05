@@ -3,17 +3,41 @@
 import Image from "next/image";
 import { Send } from "lucide-react";
 import { useState } from "react";
-import { CURRENT_USER } from "@/lib/session";
+import { useRouter } from "next/navigation";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { createStoryComment } from "@/lib/stories-client";
 
-export function CommentComposer() {
+export function CommentComposer({ storyId }: { storyId?: string }) {
   const [text, setText] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const router = useRouter();
+  const { user } = useCurrentUser();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const displayName = user?.name || "Guest";
+  const displayAvatar = user?.avatar || "https://i.pravatar.cc/100";
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
+    setError(null);
+
+    if (storyId) {
+      setIsSaving(true);
+      const result = await createStoryComment(storyId, text.trim());
+
+      if (result.error) {
+        setError(result.error);
+        setIsSaving(false);
+        return;
+      }
+    }
+
     setText("");
     setSubmitted(true);
+    setIsSaving(false);
+    router.refresh();
     setTimeout(() => setSubmitted(false), 4000);
   };
 
@@ -26,8 +50,8 @@ export function CommentComposer() {
       {/* Author row */}
       <div className="flex items-center gap-2">
         <Image
-          src={CURRENT_USER.avatar}
-          alt={CURRENT_USER.name}
+          src={displayAvatar}
+          alt={displayName}
           width={28}
           height={28}
           className="shrink-0 rounded-full"
@@ -36,7 +60,7 @@ export function CommentComposer() {
           className="text-sm font-semibold"
           style={{ color: "var(--foreground)" }}
         >
-          {CURRENT_USER.name}
+          {displayName}
         </span>
       </div>
 
@@ -61,13 +85,22 @@ export function CommentComposer() {
         </span>
         <button
           type="submit"
-          disabled={!text.trim()}
+          disabled={!text.trim() || isSaving}
           className="inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition disabled:opacity-40"
           style={{ background: "var(--primary)", color: "var(--primary-fg)" }}
         >
-          <Send size={12} /> Post comment
+          <Send size={12} /> {isSaving ? "Posting..." : "Post comment"}
         </button>
       </div>
+
+      {error ? (
+        <p
+          className="rounded-lg px-3 py-2 text-xs font-medium"
+          style={{ background: "#fee2e2", color: "#991b1b" }}
+        >
+          {error}
+        </p>
+      ) : null}
 
       {/* Success */}
       {submitted && (

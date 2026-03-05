@@ -12,6 +12,8 @@ export type Reply = {
   userId: string;
   content: string;
   createdAt: string;
+  userName?: string;
+  userAvatar?: string;
 };
 
 export type Comment = {
@@ -20,17 +22,21 @@ export type Comment = {
   content: string;
   createdAt: string;
   replies: Reply[];
+  userName?: string;
+  userAvatar?: string;
 };
 
 export type Story = {
   id: string;
   authorId: string;
+  author?: User;
   title: string;
   excerpt: string;
   body: string;
   image: string;
   tags: string[];
   likes: number;
+  commentsCount?: number;
   createdAt: string;
   comments: Comment[];
 };

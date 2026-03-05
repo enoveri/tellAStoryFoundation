@@ -4,7 +4,7 @@ import { useState } from "react";
 import { User, Bell, Shield, Trash2, ChevronLeft, Check } from "lucide-react";
 import Link from "next/link";
 import { MobileShell } from "@/components/shared/mobile-shell";
-import { CURRENT_USER } from "@/lib/session";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 function Toggle({
   label,
@@ -62,8 +62,34 @@ function Section({
 }
 
 export default function SettingsPage() {
-  const user = CURRENT_USER;
+  const { user, isLoading } = useCurrentUser();
   const [saved, setSaved] = useState(false);
+
+  if (isLoading) {
+    return (
+      <MobileShell title="Settings" subtitle="Loading account">
+        <div
+          className="p-8 text-center text-sm"
+          style={{ color: "var(--muted)" }}
+        >
+          Loading your account...
+        </div>
+      </MobileShell>
+    );
+  }
+
+  if (!user) {
+    return (
+      <MobileShell title="Settings" subtitle="Sign in required">
+        <div
+          className="p-8 text-center text-sm"
+          style={{ color: "var(--muted)" }}
+        >
+          Please sign in to update account settings.
+        </div>
+      </MobileShell>
+    );
+  }
 
   const handleSave = () => {
     setSaved(true);
@@ -109,7 +135,8 @@ export default function SettingsPage() {
                 className="text-sm font-medium"
                 style={{ color: "var(--foreground)" }}
               >
-                {user.name.toLowerCase().replace(" ", ".")}@tellastory.org
+                {user.email ||
+                  `${user.name.toLowerCase().replace(" ", ".")}@tellastory.org`}
               </p>
             </div>
           </div>

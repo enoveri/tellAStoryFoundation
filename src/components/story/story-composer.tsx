@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useState } from "react";
+import { createStory } from "@/lib/stories-client";
 
 const storySchema = z.object({
   title: z.string().min(8, "Title should be at least 8 characters"),
@@ -15,16 +18,34 @@ const storySchema = z.object({
 type StoryFormValues = z.infer<typeof storySchema>;
 
 export function StoryComposer() {
+  const router = useRouter();
+  const [publishError, setPublishError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors, isSubmitSuccessful, isSubmitting },
   } = useForm<StoryFormValues>({
     resolver: zodResolver(storySchema),
   });
 
-  const onSubmit = () => {};
+  const onSubmit = async (values: StoryFormValues) => {
+    setPublishError(null);
+
+    const result = await createStory(values);
+    if (result.error) {
+      setPublishError(result.error);
+      return;
+    }
+
+    if (result.storyId) {
+      router.push(`/stories/${result.storyId}`);
+      router.refresh();
+      return;
+    }
+
+    reset();
+  };
 
   return (
     <form
@@ -91,10 +112,17 @@ export function StoryComposer() {
 
       <button
         type="submit"
+        disabled={isSubmitting}
         className="w-full rounded-xl bg-[color:var(--primary)] px-4 py-2 text-sm font-semibold text-[color:var(--primary-fg)] shadow-sm transition hover:bg-[color:var(--primary-dark)]"
       >
-        Publish (UI demo)
+        {isSubmitting ? "Publishing..." : "Publish story"}
       </button>
+
+      {publishError ? (
+        <p className="rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">
+          {publishError}
+        </p>
+      ) : null}
 
       {isSubmitSuccessful ? (
         <div className="space-y-2 rounded-xl border border-[color:var(--border)] bg-[color:var(--success-subtle)] p-4">
@@ -105,8 +133,8 @@ export function StoryComposer() {
             Story submitted! 🎉
           </p>
           <p className="text-xs" style={{ color: "var(--success-text)" }}>
-            Your story has been captured. It will go live once publishing is
-            connected.
+            Your story has been published and is now visible in the community
+            feed.
           </p>
           <div className="flex gap-3 pt-1">
             <Link

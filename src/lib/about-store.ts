@@ -1,3 +1,5 @@
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type Pillar = { title: string; body: string };
@@ -151,12 +153,56 @@ export const defaultAboutData: AboutData = {
   ],
 };
 
-// ─── localStorage helpers ─────────────────────────────────────────────────────
+// ─── Supabase helpers ─────────────────────────────────────────────────────────
+
+type AboutPageRow = {
+  id: string;
+  hero_title: string;
+  hero_subtitle: string;
+};
+
+type AboutPillarRow = {
+  id: string;
+  title: string;
+  body: string;
+};
+
+type AboutTeamRow = {
+  id: string;
+  name: string;
+  role_title: string;
+  avatar_url: string | null;
+};
+
+type AboutGalleryRow = {
+  id: string;
+  image_url: string;
+  alt_text: string | null;
+};
+
+type AboutPartnerRow = {
+  id: string;
+  name: string;
+  kind: string | null;
+  logo_url: string | null;
+};
+
+type AboutPartnershipTypeRow = {
+  id: string;
+  title: string;
+  body: string;
+};
 
 const STORAGE_KEY = "tas_about_data";
 
-export function loadAboutData(): AboutData {
+function saveLocalFallback(data: AboutData) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function loadLocalFallback() {
   if (typeof window === "undefined") return defaultAboutData;
+
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? (JSON.parse(stored) as AboutData) : defaultAboutData;
@@ -165,7 +211,206 @@ export function loadAboutData(): AboutData {
   }
 }
 
-export function saveAboutData(data: AboutData): void {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+export async function loadAboutData(): Promise<AboutData> {
+  try {
+    const supabase = createSupabaseBrowserClient();
+    const { data: aboutPage } = await supabase
+      .from("about_page")
+      .select("id, hero_title, hero_subtitle")
+      .limit(1)
+      .maybeSingle<AboutPageRow>();
+
+    if (!aboutPage) {
+      return loadLocalFallback();
+    }
+
+    const [pillarsRes, teamRes, galleryRes, partnersRes, partnershipTypesRes] =
+      await Promise.all([
+        supabase
+          .from("about_pillars")
+          .select("id, title, body")
+          .eq("about_page_id", aboutPage.id)
+          .order("sort_order", { ascending: true })
+          .returns<AboutPillarRow[]>(),
+        supabase
+          .from("about_team_members")
+          .select("id, name, role_title, avatar_url")
+          .eq("about_page_id", aboutPage.id)
+          .order("sort_order", { ascending: true })
+          .returns<AboutTeamRow[]>(),
+        supabase
+          .from("about_gallery_assets")
+          .select("id, image_url, alt_text")
+          .eq("about_page_id", aboutPage.id)
+          .order("sort_order", { ascending: true })
+          .returns<AboutGalleryRow[]>(),
+        supabase
+          .from("about_partners")
+          .select("id, name, kind, logo_url")
+          .eq("about_page_id", aboutPage.id)
+          .order("sort_order", { ascending: true })
+          .returns<AboutPartnerRow[]>(),
+        supabase
+          .from("about_partnership_types")
+          .select("id, title, body")
+          .eq("about_page_id", aboutPage.id)
+          .order("sort_order", { ascending: true })
+          .returns<AboutPartnershipTypeRow[]>(),
+      ]);
+
+    const merged: AboutData = {
+      heroTitle: aboutPage.hero_title,
+      heroSubtitle: aboutPage.hero_subtitle,
+      pillars:
+        pillarsRes.data?.map((p) => ({ title: p.title, body: p.body })) ??
+        defaultAboutData.pillars,
+      team:
+        teamRes.data?.map((m) => ({
+          id: m.id,
+          name: m.name,
+          role: m.role_title,
+          img: m.avatar_url || "",
+        })) ?? defaultAboutData.team,
+      gallery:
+        galleryRes.data?.map((g) => ({
+          id: g.id,
+          src: g.image_url,
+          alt: g.alt_text || "Gallery image",
+        })) ?? defaultAboutData.gallery,
+      partners:
+        partnersRes.data?.map((p) => ({
+          id: p.id,
+          name: p.name,
+          kind: p.kind || "Partner",
+          logo: p.logo_url || "",
+        })) ?? defaultAboutData.partners,
+      partnershipTypes:
+        partnershipTypesRes.data?.map((pt) => ({
+          id: pt.id,
+          title: pt.title,
+          body: pt.body,
+        })) ?? defaultAboutData.partnershipTypes,
+    };
+
+    saveLocalFallback(merged);
+    return merged;
+  } catch {
+    return loadLocalFallback();
+  }
+}
+
+export async function saveAboutData(data: AboutData): Promise<void> {
+  const supabase = createSupabaseBrowserClient();
+
+  const { data: page } = await supabase
+    .from("about_page")
+    .select("id")
+    .limit(1)
+    .maybeSingle<{ id: string }>();
+
+  let pageId = page?.id;
+
+  if (!pageId) {
+    const { data: inserted, error } = await supabase
+      .from("about_page")
+      .insert({
+        hero_title: data.heroTitle,
+        hero_subtitle: data.heroSubtitle,
+      })
+      .select("id")
+      .single<{ id: string }>();
+
+    if (error || !inserted) {
+      throw new Error(error?.message || "Failed to create About page");
+    }
+
+    pageId = inserted.id;
+  } else {
+    const { error } = await supabase
+      .from("about_page")
+      .update({ hero_title: data.heroTitle, hero_subtitle: data.heroSubtitle })
+      .eq("id", pageId);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  const persistList = async <T extends Record<string, unknown>>(
+    table: string,
+    rows: T[],
+  ) => {
+    const { error: deleteError } = await supabase
+      .from(table)
+      .delete()
+      .eq("about_page_id", pageId);
+
+    if (deleteError) {
+      throw new Error(deleteError.message);
+    }
+
+    if (rows.length === 0) {
+      return;
+    }
+
+    const { error: insertError } = await supabase.from(table).insert(rows);
+
+    if (insertError) {
+      throw new Error(insertError.message);
+    }
+  };
+
+  await persistList(
+    "about_pillars",
+    data.pillars.map((p, index) => ({
+      about_page_id: pageId,
+      title: p.title,
+      body: p.body,
+      sort_order: index + 1,
+    })),
+  );
+
+  await persistList(
+    "about_team_members",
+    data.team.map((m, index) => ({
+      about_page_id: pageId,
+      name: m.name,
+      role_title: m.role,
+      avatar_url: m.img || null,
+      sort_order: index + 1,
+    })),
+  );
+
+  await persistList(
+    "about_gallery_assets",
+    data.gallery.map((g, index) => ({
+      about_page_id: pageId,
+      image_url: g.src,
+      alt_text: g.alt,
+      sort_order: index + 1,
+    })),
+  );
+
+  await persistList(
+    "about_partners",
+    data.partners.map((p, index) => ({
+      about_page_id: pageId,
+      name: p.name,
+      kind: p.kind,
+      logo_url: p.logo || null,
+      sort_order: index + 1,
+    })),
+  );
+
+  await persistList(
+    "about_partnership_types",
+    data.partnershipTypes.map((pt, index) => ({
+      about_page_id: pageId,
+      title: pt.title,
+      body: pt.body,
+      sort_order: index + 1,
+    })),
+  );
+
+  saveLocalFallback(data);
 }

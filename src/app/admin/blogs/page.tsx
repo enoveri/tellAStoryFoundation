@@ -1,14 +1,55 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, PenSquare, Trash2, Eye } from "lucide-react";
 import { MobileShell } from "@/components/shared/mobile-shell";
-import { blogs } from "@/lib/mock-data";
-import { CURRENT_USER } from "@/lib/session";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { fetchAdminBlogs } from "@/lib/admin-client";
+import type { Blog } from "@/lib/types";
 
 export default function AdminBlogsPage() {
-  const isAdmin = CURRENT_USER.role === "admin";
+  const { user, isLoading } = useCurrentUser();
+  const isAdmin = user?.role === "admin";
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [isBlogsLoading, setIsBlogsLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const load = async () => {
+      const nextBlogs = await fetchAdminBlogs();
+
+      if (!mounted) return;
+      setBlogs(nextBlogs);
+      setIsBlogsLoading(false);
+    };
+
+    if (isAdmin) {
+      void load();
+      return;
+    }
+
+    setIsBlogsLoading(false);
+
+    return () => {
+      mounted = false;
+    };
+  }, [isAdmin]);
+
+  if (isLoading) {
+    return (
+      <MobileShell title="Blogs" subtitle="Checking access">
+        <div
+          className="p-8 text-center text-sm"
+          style={{ color: "var(--muted)" }}
+        >
+          Loading your account...
+        </div>
+      </MobileShell>
+    );
+  }
 
   if (!isAdmin) {
     return (
@@ -25,6 +66,19 @@ export default function AdminBlogsPage() {
           >
             Go back
           </Link>
+        </div>
+      </MobileShell>
+    );
+  }
+
+  if (isBlogsLoading) {
+    return (
+      <MobileShell title="Manage Blogs" subtitle="Loading blogs">
+        <div
+          className="p-8 text-center text-sm"
+          style={{ color: "var(--muted)" }}
+        >
+          Loading published blogs...
         </div>
       </MobileShell>
     );

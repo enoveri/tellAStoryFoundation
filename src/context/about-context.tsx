@@ -10,36 +10,64 @@ import {
 
 type AboutContextType = {
   data: AboutData;
-  update: (data: AboutData) => void;
-  reset: () => void;
+  update: (data: AboutData) => Promise<void>;
+  reset: () => Promise<void>;
+  isLoading: boolean;
+  saveError: string | null;
 };
 
 const AboutContext = createContext<AboutContextType>({
   data: defaultAboutData,
-  update: () => {},
-  reset: () => {},
+  update: async () => {},
+  reset: async () => {},
+  isLoading: true,
+  saveError: null,
 });
 
 export function AboutProvider({ children }: { children: React.ReactNode }) {
   const [data, setData] = useState<AboutData>(defaultAboutData);
+  const [isLoading, setIsLoading] = useState(true);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  // Hydrate from localStorage on mount (client only)
   useEffect(() => {
-    setData(loadAboutData());
+    let mounted = true;
+
+    const hydrate = async () => {
+      const next = await loadAboutData();
+
+      if (!mounted) return;
+      setData(next);
+      setIsLoading(false);
+    };
+
+    void hydrate();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  const update = (newData: AboutData) => {
+  const update = async (newData: AboutData) => {
+    setSaveError(null);
     setData(newData);
-    saveAboutData(newData);
+
+    try {
+      await saveAboutData(newData);
+    } catch (error) {
+      setSaveError(
+        error instanceof Error ? error.message : "Failed to save About content",
+      );
+      throw error;
+    }
   };
 
-  const reset = () => {
+  const reset = async () => {
     setData(defaultAboutData);
-    saveAboutData(defaultAboutData);
+    await saveAboutData(defaultAboutData);
   };
 
   return (
-    <AboutContext.Provider value={{ data, update, reset }}>
+    <AboutContext.Provider value={{ data, update, reset, isLoading, saveError }}>
       {children}
     </AboutContext.Provider>
   );

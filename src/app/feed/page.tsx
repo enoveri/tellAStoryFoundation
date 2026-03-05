@@ -3,9 +3,11 @@ import { PenSquare } from "lucide-react";
 import { MobileShell } from "@/components/shared/mobile-shell";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StoryCard } from "@/components/story/story-card";
-import { stories } from "@/lib/mock-data";
+import { loadStories } from "@/lib/stories-store";
 
-export default function FeedPage() {
+export default async function FeedPage() {
+  const stories = await loadStories();
+
   return (
     <MobileShell
       title="Community Stories"

@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { MobileShell } from "@/components/shared/mobile-shell";
 import { StoryCard } from "@/components/story/story-card";
-import { CURRENT_USER } from "@/lib/session";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import { stories } from "@/lib/mock-data";
 
 // ─── Role badge ───────────────────────────────────────────────────────────────
@@ -44,7 +44,34 @@ function RoleBadge({ role }: { role?: string }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ProfilePage() {
-  const user = CURRENT_USER;
+  const { user, isLoading } = useCurrentUser();
+
+  if (isLoading) {
+    return (
+      <MobileShell title="Profile" subtitle="Loading account">
+        <div
+          className="p-8 text-center text-sm"
+          style={{ color: "var(--muted)" }}
+        >
+          Loading your account...
+        </div>
+      </MobileShell>
+    );
+  }
+
+  if (!user) {
+    return (
+      <MobileShell title="Profile" subtitle="Sign in required">
+        <div
+          className="p-8 text-center text-sm"
+          style={{ color: "var(--muted)" }}
+        >
+          Please sign in to view your profile.
+        </div>
+      </MobileShell>
+    );
+  }
+
   const isAdmin = user.role === "admin";
 
   const myStories = stories.filter((s) => s.authorId === user.id);

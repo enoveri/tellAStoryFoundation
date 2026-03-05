@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Info } from "lucide-react";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import { cn } from "@/lib/utils";
-import { CURRENT_USER } from "@/lib/session";
 
 type TopBarProps = {
   title: string;
@@ -14,6 +14,10 @@ type TopBarProps = {
 
 export function TopBar({ title, subtitle }: TopBarProps) {
   const dir = useScrollDirection();
+  const { user } = useCurrentUser();
+
+  const userName = user?.name || "Profile";
+  const userAvatar = user?.avatar || "https://i.pravatar.cc/100";
 
   return (
     <header
@@ -59,10 +63,10 @@ export function TopBar({ title, subtitle }: TopBarProps) {
       </Link>
 
       {/* Profile avatar */}
-      <Link href="/profile" className="shrink-0" title={CURRENT_USER.name}>
+      <Link href="/profile" className="shrink-0" title={userName}>
         <Image
-          src={CURRENT_USER.avatar}
-          alt={CURRENT_USER.name}
+          src={userAvatar}
+          alt={userName}
           width={34}
           height={34}
           className="rounded-full border-2 border-[color:var(--primary-mid)] object-cover"

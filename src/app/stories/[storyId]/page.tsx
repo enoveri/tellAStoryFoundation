@@ -6,7 +6,7 @@ import { MobileShell } from "@/components/shared/mobile-shell";
 import { CommentThread } from "@/components/story/comment-thread";
 import { CommentComposer } from "@/components/story/comment-composer";
 import { InteractionBar } from "@/components/story/interaction-bar";
-import { findStory, findUser } from "@/lib/mock-data";
+import { loadStoryById } from "@/lib/stories-store";
 
 type StoryDetailPageProps = {
   params: Promise<{ storyId: string }>;
@@ -16,13 +16,13 @@ export default async function StoryDetailPage({
   params,
 }: StoryDetailPageProps) {
   const { storyId } = await params;
-  const story = findStory(storyId);
+  const story = await loadStoryById(storyId);
 
   if (!story) {
     notFound();
   }
 
-  const author = findUser(story.authorId);
+  const author = story.author;
 
   return (
     <MobileShell
@@ -102,8 +102,9 @@ export default async function StoryDetailPage({
         </p>
 
         <InteractionBar
+          storyId={story.id}
           initialLikes={story.likes}
-          commentsCount={story.comments.length}
+          commentsCount={story.commentsCount ?? story.comments.length}
         />
       </article>
 
@@ -111,10 +112,10 @@ export default async function StoryDetailPage({
         <h3 className="text-base font-semibold text-[color:var(--foreground)]">
           Conversation{" "}
           <span className="text-sm font-normal text-[color:var(--muted)]">
-            ({story.comments.length})
+            ({story.commentsCount ?? story.comments.length})
           </span>
         </h3>
-        <CommentComposer />
+        <CommentComposer storyId={story.id} />
         <CommentThread comments={story.comments} />
       </section>
     </MobileShell>

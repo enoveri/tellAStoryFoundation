@@ -11,8 +11,8 @@ import {
   Info,
 } from "lucide-react";
 import { MobileShell } from "@/components/shared/mobile-shell";
-import { users, stories, blogs, events } from "@/lib/mock-data";
-import { CURRENT_USER } from "@/lib/session";
+import { loadAdminOverview, loadRecentMembers } from "@/lib/admin-store";
+import { getCurrentUserProfile } from "@/lib/auth";
 
 // ─── Stat card ────────────────────────────────────────────────────────────────
 
@@ -94,8 +94,14 @@ function Action({
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default function AdminPage() {
-  const isAdmin = CURRENT_USER.role === "admin";
+export default async function AdminPage() {
+  const currentUser = await getCurrentUserProfile();
+  const isAdmin = currentUser?.role === "admin";
+
+  const [overview, recentMembers] = await Promise.all([
+    loadAdminOverview(),
+    loadRecentMembers(4),
+  ]);
 
   if (!isAdmin) {
     return (
@@ -120,7 +126,7 @@ export default function AdminPage() {
     );
   }
 
-  const memberCount = users.filter((u) => u.role !== "admin").length;
+  const memberCount = overview.membersCount;
 
   return (
     <MobileShell title="Admin Dashboard" subtitle="Platform management">
@@ -136,25 +142,25 @@ export default function AdminPage() {
           <div className="grid grid-cols-4 gap-2">
             <StatCard
               icon={Users}
-              value={users.length}
+              value={overview.usersCount}
               label="Users"
               href="/admin/users"
             />
             <StatCard
               icon={Sparkles}
-              value={stories.length}
+              value={overview.storiesCount}
               label="Stories"
               href="/feed"
             />
             <StatCard
               icon={BookOpen}
-              value={blogs.length}
+              value={overview.blogsCount}
               label="Blogs"
               href="/admin/blogs"
             />
             <StatCard
               icon={CalendarDays}
-              value={events.length}
+              value={overview.eventsCount}
               label="Events"
               href="/events"
             />
@@ -223,7 +229,7 @@ export default function AdminPage() {
             className="divide-y rounded-2xl border"
             style={{ borderColor: "var(--border)", background: "var(--card)" }}
           >
-            {users.slice(0, 4).map((u) => (
+            {recentMembers.map((u) => (
               <div key={u.id} className="flex items-center gap-3 px-4 py-3">
                 <Image
                   src={u.avatar}
@@ -243,7 +249,8 @@ export default function AdminPage() {
                     className="text-xs capitalize"
                     style={{ color: "var(--muted)" }}
                   >
-                    {u.role ?? "member"} · joined {u.joinedAt}
+                    {u.role ?? "member"}
+                    {u.joinedAt ? ` · joined ${u.joinedAt}` : ""}
                   </p>
                 </div>
               </div>

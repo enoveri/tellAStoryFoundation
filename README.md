@@ -1,5 +1,38 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Supabase Setup
+
+1. Create `web/.env.local` with:
+
+```dotenv
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-or-anon-key
+SUPABASE_DB_URL=your-postgres-connection-string
+```
+
+2. Use Supabase CLI through npx:
+
+```bash
+npx --yes supabase@2.76.17 --version
+```
+
+3. Log in and link the project:
+
+```bash
+npx --yes supabase@2.76.17 login
+npx --yes supabase@2.76.17 link --project-ref tvhdfrfyaujyreraiadq
+```
+
+4. For schema workflow (recommended):
+
+```bash
+npx --yes supabase@2.76.17 db pull
+npx --yes supabase@2.76.17 migration new init_schema
+npx --yes supabase@2.76.17 db push
+```
+
+Use CLI operations from the `web/` directory.
+
 ## Getting Started
 
 First, run the development server:

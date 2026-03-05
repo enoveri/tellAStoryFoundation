@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { InteractionBar } from "@/components/story/interaction-bar";
-import { findUser } from "@/lib/mock-data";
 import type { Story } from "@/lib/types";
 
 type StoryCardProps = {
@@ -9,7 +8,7 @@ type StoryCardProps = {
 };
 
 export function StoryCard({ story }: StoryCardProps) {
-  const author = findUser(story.authorId);
+  const author = story.author;
 
   return (
     <article className="space-y-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-3 shadow-sm">
@@ -60,8 +59,9 @@ export function StoryCard({ story }: StoryCardProps) {
       </div>
 
       <InteractionBar
+        storyId={story.id}
         initialLikes={story.likes}
-        commentsCount={story.comments.length}
+        commentsCount={story.commentsCount ?? story.comments.length}
       />
     </article>
   );

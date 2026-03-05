@@ -9,8 +9,7 @@ export default function WritePage() {
     >
       <StoryComposer />
       <p className="text-center text-xs text-[color:var(--muted)]">
-        This is a UI-only demo. Authentication and live publishing will be
-        connected next.
+        Published stories appear in the community feed immediately.
       </p>
     </MobileShell>
   );

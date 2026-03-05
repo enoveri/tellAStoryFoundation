@@ -11,7 +11,7 @@ import {
   Check,
 } from "lucide-react";
 import { MobileShell } from "@/components/shared/mobile-shell";
-import { CURRENT_USER } from "@/lib/session";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import { useAbout } from "@/context/about-context";
 import type {
   AboutData,
@@ -70,11 +70,19 @@ function Field({
   );
 }
 
-function SaveBar({ onSave, saved }: { onSave: () => void; saved: boolean }) {
+function SaveBar({
+  onSave,
+  saved,
+}: {
+  onSave: () => void | Promise<void>;
+  saved: boolean;
+}) {
   return (
     <div className="flex items-center justify-end py-2">
       <button
-        onClick={onSave}
+        onClick={() => {
+          void onSave();
+        }}
         className="inline-flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-semibold shadow-sm transition"
         style={{
           background: saved ? "var(--success)" : "var(--primary)",
@@ -192,8 +200,8 @@ function HeroEditor({
 
       <SaveBar
         saved={saved}
-        onSave={() => {
-          update(draft);
+        onSave={async () => {
+          await update(draft);
           flash();
         }}
       />
@@ -281,8 +289,8 @@ function TeamEditor({
       </button>
       <SaveBar
         saved={saved}
-        onSave={() => {
-          update(draft);
+        onSave={async () => {
+          await update(draft);
           flash();
         }}
       />
@@ -383,8 +391,8 @@ function GalleryEditor({
 
       <SaveBar
         saved={saved}
-        onSave={() => {
-          update(draft);
+        onSave={async () => {
+          await update(draft);
           flash();
         }}
       />
@@ -544,8 +552,8 @@ function PartnersEditor({
 
       <SaveBar
         saved={saved}
-        onSave={() => {
-          update(draft);
+        onSave={async () => {
+          await update(draft);
           flash();
         }}
       />
@@ -565,10 +573,24 @@ const sections = [
 type SectionId = (typeof sections)[number]["id"];
 
 export default function AdminAboutPage() {
-  const isAdmin = CURRENT_USER.role === "admin";
-  const { data, reset } = useAbout();
+  const { user, isLoading } = useCurrentUser();
+  const isAdmin = user?.role === "admin";
+  const { data, reset, saveError } = useAbout();
   const [active, setActive] = useState<SectionId>("hero");
   const [draft, setDraft] = useState(data);
+
+  if (isLoading) {
+    return (
+      <MobileShell title="Edit About Page" subtitle="Checking access">
+        <div
+          className="px-4 py-8 text-center text-sm"
+          style={{ color: "var(--muted)" }}
+        >
+          Loading your account...
+        </div>
+      </MobileShell>
+    );
+  }
 
   // Keep draft in sync when context changes externally (e.g. on first hydration)
   useEffect(() => {
@@ -619,8 +641,10 @@ export default function AdminAboutPage() {
             Preview
           </Link>
           <button
-            onClick={() => {
-              if (confirm("Reset all About page content to defaults?")) reset();
+            onClick={async () => {
+              if (confirm("Reset all About page content to defaults?")) {
+                await reset();
+              }
             }}
             className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold"
             style={{ borderColor: "#ef4444", color: "#ef4444" }}
@@ -659,6 +683,14 @@ export default function AdminAboutPage() {
 
       {/* Active editor */}
       <div className="px-4 py-2">
+        {saveError ? (
+          <div
+            className="mb-3 rounded-xl border px-3 py-2 text-xs"
+            style={{ borderColor: "#ef4444", color: "#ef4444" }}
+          >
+            Save failed: {saveError}
+          </div>
+        ) : null}
         {active === "hero" && <HeroEditor draft={draft} onChange={setDraft} />}
         {active === "team" && <TeamEditor draft={draft} onChange={setDraft} />}
         {active === "gallery" && (

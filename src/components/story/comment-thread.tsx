@@ -36,6 +36,9 @@ export function CommentThread({ comments }: CommentThreadProps) {
       {expanded
         ? comments.map((comment) => {
             const user = findUser(comment.userId);
+            const name = comment.userName || user?.name || "Anonymous";
+            const avatar =
+              comment.userAvatar || user?.avatar || "https://i.pravatar.cc/100";
             return (
               <article
                 key={comment.id}
@@ -43,14 +46,14 @@ export function CommentThread({ comments }: CommentThreadProps) {
               >
                 <div className="flex items-center gap-2">
                   <Image
-                    src={user?.avatar ?? "https://i.pravatar.cc/100"}
-                    alt={user?.name ?? "User"}
+                    src={avatar}
+                    alt={name}
                     width={24}
                     height={24}
                     className="h-6 w-6 rounded-full"
                   />
                   <span className="text-sm font-semibold text-[color:var(--foreground)]">
-                    {user?.name ?? "Anonymous"}
+                    {name}
                   </span>
                   <span className="text-xs text-[color:var(--muted)]">
                     {comment.createdAt}
