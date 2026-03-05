@@ -1,9 +1,23 @@
-import { Mail, MessageCircle, Instagram, Twitter, Facebook } from "lucide-react";
+import {
+  Mail,
+  MessageCircle,
+  Instagram,
+  Twitter,
+  Facebook,
+} from "lucide-react";
 
 const socials = [
-  { icon: Instagram, label: "Instagram", href: "https://instagram.com/tellastory" },
-  { icon: Twitter,   label: "Twitter/X", href: "https://twitter.com/tellastory" },
-  { icon: Facebook,  label: "Facebook",  href: "https://facebook.com/tellastory" },
+  {
+    icon: Instagram,
+    label: "Instagram",
+    href: "https://instagram.com/tellastory",
+  },
+  { icon: Twitter, label: "Twitter/X", href: "https://twitter.com/tellastory" },
+  {
+    icon: Facebook,
+    label: "Facebook",
+    href: "https://facebook.com/tellastory",
+  },
 ];
 
 export function ContactHome() {
@@ -30,7 +44,8 @@ export function ContactHome() {
           className="text-sm leading-relaxed"
           style={{ color: "var(--inverse-muted)" }}
         >
-          Whether you want to write, volunteer, partner, or just say hello — we would love to hear from you.
+          Whether you want to write, volunteer, partner, or just say hello — we
+          would love to hear from you.
         </p>
       </div>
 
@@ -60,7 +75,10 @@ export function ContactHome() {
       </div>
 
       {/* Divider */}
-      <div className="mx-5" style={{ borderTop: "1px solid var(--inverse-border)" }} />
+      <div
+        className="mx-5"
+        style={{ borderTop: "1px solid var(--inverse-border)" }}
+      />
 
       {/* Socials */}
       <div className="flex items-center gap-4 px-5 py-4">
@@ -87,4 +105,3 @@ export function ContactHome() {
     </section>
   );
 }
-

@@ -32,7 +32,10 @@ export function CommentComposer() {
           height={28}
           className="shrink-0 rounded-full"
         />
-        <span className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
+        <span
+          className="text-sm font-semibold"
+          style={{ color: "var(--foreground)" }}
+        >
           {CURRENT_USER.name}
         </span>
       </div>
@@ -44,7 +47,11 @@ export function CommentComposer() {
         rows={3}
         placeholder="Share what this story meant to you…"
         className="w-full resize-none rounded-xl border px-3 py-2 text-sm outline-none"
-        style={{ borderColor: "var(--border)", color: "var(--foreground)", background: "var(--background)" }}
+        style={{
+          borderColor: "var(--border)",
+          color: "var(--foreground)",
+          background: "var(--background)",
+        }}
       />
 
       {/* Submit */}
@@ -66,7 +73,10 @@ export function CommentComposer() {
       {submitted && (
         <p
           className="rounded-lg px-3 py-2 text-xs font-medium"
-          style={{ background: "var(--success-subtle)", color: "var(--success-text)" }}
+          style={{
+            background: "var(--success-subtle)",
+            color: "var(--success-text)",
+          }}
         >
           Comment posted! (UI demo — will persist once auth is connected.)
         </p>

@@ -19,7 +19,8 @@ export function BottomNav() {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t border-[color:var(--border)] bg-[color:var(--card)] px-1 py-1">
       {navItems.map(({ href, label, icon: Icon }) => {
-        const isActive = pathname === href || (href !== "/" && pathname.startsWith(href));
+        const isActive =
+          pathname === href || (href !== "/" && pathname.startsWith(href));
         return (
           <Link
             key={href}
@@ -28,7 +29,7 @@ export function BottomNav() {
               "flex flex-col items-center gap-0.5 rounded-xl px-1 py-1.5 text-xs font-medium transition",
               isActive
                 ? "bg-[color:var(--primary-light)] text-[color:var(--foreground)]"
-                : "text-[color:var(--muted)] hover:bg-[color:var(--primary-subtle)]"
+                : "text-[color:var(--muted)] hover:bg-[color:var(--primary-subtle)]",
             )}
           >
             <Icon size={16} />

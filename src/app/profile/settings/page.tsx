@@ -6,7 +6,13 @@ import Link from "next/link";
 import { MobileShell } from "@/components/shared/mobile-shell";
 import { CURRENT_USER } from "@/lib/session";
 
-function Toggle({ label, defaultOn = false }: { label: string; defaultOn?: boolean }) {
+function Toggle({
+  label,
+  defaultOn = false,
+}: {
+  label: string;
+  defaultOn?: boolean;
+}) {
   const [on, setOn] = useState(defaultOn);
   return (
     <button
@@ -14,7 +20,9 @@ function Toggle({ label, defaultOn = false }: { label: string; defaultOn?: boole
       onClick={() => setOn((v) => !v)}
       className="flex w-full items-center justify-between py-3"
     >
-      <span className="text-sm" style={{ color: "var(--foreground)" }}>{label}</span>
+      <span className="text-sm" style={{ color: "var(--foreground)" }}>
+        {label}
+      </span>
       <span
         className="relative inline-flex h-6 w-11 items-center rounded-full transition"
         style={{ background: on ? "var(--primary)" : "var(--border)" }}
@@ -28,11 +36,25 @@ function Toggle({ label, defaultOn = false }: { label: string; defaultOn?: boole
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <section className="mx-4 space-y-1">
-      <h3 className="mb-3 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--muted)" }}>{title}</h3>
-      <div className="divide-y rounded-2xl border px-4" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
+      <h3
+        className="mb-3 text-xs font-bold uppercase tracking-wider"
+        style={{ color: "var(--muted)" }}
+      >
+        {title}
+      </h3>
+      <div
+        className="divide-y rounded-2xl border px-4"
+        style={{ borderColor: "var(--border)", background: "var(--card)" }}
+      >
         {children}
       </div>
     </section>
@@ -51,10 +73,13 @@ export default function SettingsPage() {
   return (
     <MobileShell title="Settings" subtitle="Account & preferences">
       <div className="space-y-6 pb-4">
-
         {/* Back link */}
         <div className="px-4 pt-1">
-          <Link href="/profile" className="inline-flex items-center gap-1 text-sm font-medium" style={{ color: "var(--primary)" }}>
+          <Link
+            href="/profile"
+            className="inline-flex items-center gap-1 text-sm font-medium"
+            style={{ color: "var(--primary)" }}
+          >
             <ChevronLeft size={16} /> Back to Profile
           </Link>
         </div>
@@ -64,7 +89,9 @@ export default function SettingsPage() {
           <div className="flex items-center gap-3 py-3">
             <User size={16} style={{ color: "var(--muted)" }} />
             <div className="min-w-0 flex-1">
-              <p className="text-xs" style={{ color: "var(--muted)" }}>Display name</p>
+              <p className="text-xs" style={{ color: "var(--muted)" }}>
+                Display name
+              </p>
               <input
                 defaultValue={user.name}
                 className="w-full bg-transparent text-sm font-medium outline-none"
@@ -75,8 +102,13 @@ export default function SettingsPage() {
           <div className="flex items-center gap-3 py-3">
             <User size={16} style={{ color: "var(--muted)" }} />
             <div className="min-w-0 flex-1">
-              <p className="text-xs" style={{ color: "var(--muted)" }}>Email (Google linked)</p>
-              <p className="text-sm font-medium" style={{ color: "var(--foreground)" }}>
+              <p className="text-xs" style={{ color: "var(--muted)" }}>
+                Email (Google linked)
+              </p>
+              <p
+                className="text-sm font-medium"
+                style={{ color: "var(--foreground)" }}
+              >
                 {user.name.toLowerCase().replace(" ", ".")}@tellastory.org
               </p>
             </div>
@@ -84,7 +116,9 @@ export default function SettingsPage() {
           <div className="flex items-center gap-3 py-3">
             <User size={16} style={{ color: "var(--muted)" }} />
             <div className="min-w-0 flex-1">
-              <p className="text-xs" style={{ color: "var(--muted)" }}>Bio</p>
+              <p className="text-xs" style={{ color: "var(--muted)" }}>
+                Bio
+              </p>
               <input
                 defaultValue={user.bio ?? ""}
                 placeholder="A short bio about you"
@@ -117,7 +151,13 @@ export default function SettingsPage() {
             className="flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold shadow-sm transition"
             style={{ background: "var(--primary)", color: "var(--primary-fg)" }}
           >
-            {saved ? <><Check size={16} /> Saved!</> : "Save Changes"}
+            {saved ? (
+              <>
+                <Check size={16} /> Saved!
+              </>
+            ) : (
+              "Save Changes"
+            )}
           </button>
         </div>
 
@@ -125,13 +165,20 @@ export default function SettingsPage() {
         <Section title="Danger Zone">
           <button
             className="flex w-full items-center gap-3 py-3 text-sm font-medium text-rose-600"
-            onClick={() => alert("Account deletion will be available once auth is connected.")}
+            onClick={() =>
+              alert(
+                "Account deletion will be available once auth is connected.",
+              )
+            }
           >
             <Trash2 size={16} /> Delete my account
           </button>
         </Section>
 
-        <p className="px-4 text-center text-xs" style={{ color: "var(--muted)" }}>
+        <p
+          className="px-4 text-center text-xs"
+          style={{ color: "var(--muted)" }}
+        >
           Authentication via Google Sign-In — coming soon.
         </p>
       </div>

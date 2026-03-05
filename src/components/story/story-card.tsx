@@ -14,22 +14,37 @@ export function StoryCard({ story }: StoryCardProps) {
   return (
     <article className="space-y-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-3 shadow-sm">
       <div className="flex items-center justify-between text-xs text-[color:var(--muted)]">
-        <span className="font-semibold text-[color:var(--foreground)]">{author?.name ?? "Anonymous"}</span>
+        <span className="font-semibold text-[color:var(--foreground)]">
+          {author?.name ?? "Anonymous"}
+        </span>
         <span>{story.createdAt}</span>
       </div>
 
       <div className="relative h-44 overflow-hidden rounded-xl">
-        <Image src={story.image} alt={story.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
+        <Image
+          src={story.image}
+          alt={story.title}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 400px"
+        />
       </div>
 
       <div className="space-y-1">
-        <h2 className="text-lg font-semibold leading-tight text-[color:var(--foreground)]">{story.title}</h2>
-        <p className="line-clamp-2 text-sm text-[color:var(--muted)]">{story.excerpt}</p>
+        <h2 className="text-lg font-semibold leading-tight text-[color:var(--foreground)]">
+          {story.title}
+        </h2>
+        <p className="line-clamp-2 text-sm text-[color:var(--muted)]">
+          {story.excerpt}
+        </p>
       </div>
 
       <div className="flex flex-wrap gap-2">
         {story.tags.map((tag) => (
-          <span key={tag} className="rounded-full bg-[color:var(--primary-subtle)] px-2 py-0.5 text-xs font-medium text-[color:var(--muted)]">
+          <span
+            key={tag}
+            className="rounded-full bg-[color:var(--primary-subtle)] px-2 py-0.5 text-xs font-medium text-[color:var(--muted)]"
+          >
             #{tag}
           </span>
         ))}
@@ -44,7 +59,10 @@ export function StoryCard({ story }: StoryCardProps) {
         </Link>
       </div>
 
-      <InteractionBar initialLikes={story.likes} commentsCount={story.comments.length} />
+      <InteractionBar
+        initialLikes={story.likes}
+        commentsCount={story.comments.length}
+      />
     </article>
   );
 }

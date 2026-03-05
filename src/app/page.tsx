@@ -19,7 +19,10 @@ export default function Home() {
         <section className="space-y-3 px-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Top stories</h2>
-            <Link href="/feed" className="text-sm font-medium text-[color:var(--muted)] hover:text-[color:var(--primary)]">
+            <Link
+              href="/feed"
+              className="text-sm font-medium text-[color:var(--muted)] hover:text-[color:var(--primary)]"
+            >
               View all
             </Link>
           </div>
@@ -34,7 +37,10 @@ export default function Home() {
         <section className="space-y-3 px-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">From the blog</h2>
-            <Link href="/blog" className="text-sm font-medium text-[color:var(--muted)] hover:text-[color:var(--primary)]">
+            <Link
+              href="/blog"
+              className="text-sm font-medium text-[color:var(--muted)] hover:text-[color:var(--primary)]"
+            >
               View all
             </Link>
           </div>
@@ -46,12 +52,24 @@ export default function Home() {
                 className="flex w-64 shrink-0 flex-col overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="relative h-32 w-full">
-                  <Image src={blog.cover} alt={blog.title} fill className="object-cover" sizes="256px" />
+                  <Image
+                    src={blog.cover}
+                    alt={blog.title}
+                    fill
+                    className="object-cover"
+                    sizes="256px"
+                  />
                 </div>
                 <div className="flex flex-1 flex-col gap-1 p-3">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--primary)]">{blog.publishedAt}</p>
-                  <p className="text-sm font-semibold leading-tight text-[color:var(--foreground)] line-clamp-2">{blog.title}</p>
-                  <p className="text-xs leading-relaxed text-[color:var(--muted)] line-clamp-2">{blog.summary}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--primary)]">
+                    {blog.publishedAt}
+                  </p>
+                  <p className="text-sm font-semibold leading-tight text-[color:var(--foreground)] line-clamp-2">
+                    {blog.title}
+                  </p>
+                  <p className="text-xs leading-relaxed text-[color:var(--muted)] line-clamp-2">
+                    {blog.summary}
+                  </p>
                   <span className="mt-auto inline-flex items-center gap-1 pt-2 text-xs font-semibold text-[color:var(--primary)]">
                     Read more <ArrowRight size={11} />
                   </span>

@@ -13,7 +13,9 @@ export function BlogEditor() {
   return (
     <div className="space-y-4">
       <section className="space-y-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-4 shadow-sm">
-        <h2 className="text-base font-semibold text-[color:var(--foreground)]">Compose blog</h2>
+        <h2 className="text-base font-semibold text-[color:var(--foreground)]">
+          Compose blog
+        </h2>
         <input
           value={title}
           onChange={(event) => setTitle(event.target.value)}
@@ -40,8 +42,12 @@ export function BlogEditor() {
       </section>
 
       <section className="space-y-2 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--muted)]">Live preview</p>
-        <h3 className="text-lg font-semibold text-[color:var(--foreground)]">{title}</h3>
+        <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--muted)]">
+          Live preview
+        </p>
+        <h3 className="text-lg font-semibold text-[color:var(--foreground)]">
+          {title}
+        </h3>
         <p className="text-sm text-[color:var(--muted)]">{summary}</p>
         <article className="space-y-2 text-sm leading-7 text-[color:var(--foreground)]/90">
           <ReactMarkdown>{markdown}</ReactMarkdown>

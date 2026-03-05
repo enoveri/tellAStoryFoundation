@@ -9,9 +9,15 @@ type InteractionBarProps = {
   commentsCount: number;
 };
 
-export function InteractionBar({ initialLikes, commentsCount }: InteractionBarProps) {
+export function InteractionBar({
+  initialLikes,
+  commentsCount,
+}: InteractionBarProps) {
   const [liked, setLiked] = useState(false);
-  const likes = useMemo(() => initialLikes + (liked ? 1 : 0), [initialLikes, liked]);
+  const likes = useMemo(
+    () => initialLikes + (liked ? 1 : 0),
+    [initialLikes, liked],
+  );
 
   return (
     <div className="flex items-center gap-3 border-t border-[color:var(--border)] pt-3">
@@ -20,7 +26,9 @@ export function InteractionBar({ initialLikes, commentsCount }: InteractionBarPr
         onClick={() => setLiked((value) => !value)}
         className={cn(
           "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition",
-          liked ? "bg-[color:var(--primary-light)] text-[color:var(--primary)]" : "bg-[color:var(--primary-subtle)] text-[color:var(--muted)] hover:bg-[color:var(--primary-light)]"
+          liked
+            ? "bg-[color:var(--primary-light)] text-[color:var(--primary)]"
+            : "bg-[color:var(--primary-subtle)] text-[color:var(--muted)] hover:bg-[color:var(--primary-light)]",
         )}
       >
         <Heart size={16} className={cn(liked ? "fill-current" : "")} /> {likes}

@@ -7,7 +7,10 @@ import Link from "next/link";
 export default function BlogPage() {
   const isAdmin = CURRENT_USER.role === "admin";
   return (
-    <MobileShell title="Tell A Story Blogs" subtitle="Official updates and insights from the NGO.">
+    <MobileShell
+      title="Tell A Story Blogs"
+      subtitle="Official updates and insights from the NGO."
+    >
       {isAdmin && (
         <Link
           href="/blog/new"

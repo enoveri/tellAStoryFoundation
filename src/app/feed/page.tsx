@@ -7,13 +7,25 @@ import { stories } from "@/lib/mock-data";
 
 export default function FeedPage() {
   return (
-    <MobileShell title="Community Stories" subtitle="Read, react, and encourage others.">
+    <MobileShell
+      title="Community Stories"
+      subtitle="Read, react, and encourage others."
+    >
       {/* Stats + write shortcut */}
-      <div className="flex items-center justify-between rounded-2xl border px-4 py-3"
-        style={{ borderColor: "var(--border)", background: "var(--card)" }}>
+      <div
+        className="flex items-center justify-between rounded-2xl border px-4 py-3"
+        style={{ borderColor: "var(--border)", background: "var(--card)" }}
+      >
         <div>
-          <p className="text-lg font-bold" style={{ color: "var(--foreground)" }}>{stories.length}</p>
-          <p className="text-xs" style={{ color: "var(--muted)" }}>stories shared</p>
+          <p
+            className="text-lg font-bold"
+            style={{ color: "var(--foreground)" }}
+          >
+            {stories.length}
+          </p>
+          <p className="text-xs" style={{ color: "var(--muted)" }}>
+            stories shared
+          </p>
         </div>
         <Link
           href="/write"
@@ -24,9 +36,14 @@ export default function FeedPage() {
         </Link>
       </div>
 
-      {stories.length ? stories.map((story) => <StoryCard key={story.id} story={story} />) : null}
+      {stories.length
+        ? stories.map((story) => <StoryCard key={story.id} story={story} />)
+        : null}
       {stories.length === 0 ? (
-        <EmptyState title="No stories yet" description="The feed will appear here as soon as members start sharing." />
+        <EmptyState
+          title="No stories yet"
+          description="The feed will appear here as soon as members start sharing."
+        />
       ) : null}
     </MobileShell>
   );

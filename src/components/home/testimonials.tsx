@@ -5,7 +5,9 @@ import { testimonials } from "@/lib/mock-data";
 export function Testimonials() {
   return (
     <section className="space-y-3 px-4">
-      <h2 className="text-lg font-semibold text-[color:var(--foreground)]">What our community says</h2>
+      <h2 className="text-lg font-semibold text-[color:var(--foreground)]">
+        What our community says
+      </h2>
 
       <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-none">
         {testimonials.map((t) => (
@@ -31,8 +33,12 @@ export function Testimonials() {
                 className="rounded-full border-2 border-[color:var(--border)] object-cover shrink-0"
               />
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-[color:var(--foreground)]">{t.name}</p>
-                <p className="truncate text-xs text-[color:var(--muted)]">{t.role}</p>
+                <p className="truncate text-sm font-semibold text-[color:var(--foreground)]">
+                  {t.name}
+                </p>
+                <p className="truncate text-xs text-[color:var(--muted)]">
+                  {t.role}
+                </p>
               </div>
               <span className="ml-auto shrink-0 rounded-full bg-[color:var(--primary-subtle)] px-2 py-0.5 text-[10px] font-semibold text-[color:var(--primary)]">
                 {t.country}
