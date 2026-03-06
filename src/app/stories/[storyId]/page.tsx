@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, CalendarDays } from "lucide-react";
@@ -12,6 +13,64 @@ import { loadStoryById } from "@/lib/stories-store";
 type StoryDetailPageProps = {
   params: Promise<{ storyId: string }>;
 };
+
+function getBaseUrl() {
+  return (
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    "https://tellastoryfoundation.org"
+  );
+}
+
+function truncate(value: string, length = 170) {
+  if (value.length <= length) return value;
+  return `${value.slice(0, length - 1).trimEnd()}...`;
+}
+
+export async function generateMetadata({
+  params,
+}: StoryDetailPageProps): Promise<Metadata> {
+  const { storyId } = await params;
+  const story = await loadStoryById(storyId);
+
+  if (!story) {
+    return {
+      title: "Story not found | Tell A Story",
+      description: "This story could not be found.",
+    };
+  }
+
+  const description = truncate(story.excerpt || story.body || "Community story");
+  const image = story.images?.[0] || story.image;
+  const url = `${getBaseUrl()}/stories/${story.id}`;
+
+  return {
+    title: `${story.title} | Tell A Story`,
+    description,
+    alternates: {
+      canonical: `/stories/${story.id}`,
+    },
+    openGraph: {
+      type: "article",
+      title: story.title,
+      description,
+      url,
+      images: [
+        {
+          url: image,
+          alt: story.title,
+        },
+      ],
+      siteName: "Tell A Story",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: story.title,
+      description,
+      images: [image],
+    },
+  };
+}
 
 export default async function StoryDetailPage({
   params,

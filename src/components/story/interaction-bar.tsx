@@ -17,6 +17,11 @@ type InteractionBarProps = {
   storyExcerpt?: string;
 };
 
+function truncate(value: string, length = 140) {
+  if (value.length <= length) return value;
+  return `${value.slice(0, length - 1).trimEnd()}...`;
+}
+
 export function InteractionBar({
   storyId,
   initialLikes,
@@ -119,9 +124,12 @@ export function InteractionBar({
 
           if (navigator.share) {
             try {
+              const previewText = storyExcerpt
+                ? truncate(storyExcerpt)
+                : "Read this story";
               await navigator.share({
                 title: storyTitle || "Story",
-                text: storyExcerpt || "Read this story",
+                text: previewText,
                 url: shareUrl,
               });
               return;
@@ -131,7 +139,11 @@ export function InteractionBar({
           }
 
           if (navigator.clipboard) {
-            await navigator.clipboard.writeText(shareUrl);
+            const previewText = storyExcerpt
+              ? truncate(storyExcerpt)
+              : "Read this story";
+            const content = `${storyTitle || "Story"}\n${previewText}\n${shareUrl}`;
+            await navigator.clipboard.writeText(content);
           }
         }}
         className="inline-flex items-center gap-2 rounded-full bg-[color:var(--primary-subtle)] px-3 py-1.5 text-sm font-medium text-[color:var(--muted)] transition hover:bg-[color:var(--primary-light)]"

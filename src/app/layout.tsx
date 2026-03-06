@@ -15,6 +15,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      "https://tellastoryfoundation.org",
+  ),
   title: "Tell A Story",
   description: "Mobile-first storytelling platform UI for the Tell A Story NGO",
 };

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import {
   CalendarDays,
   Clock,
@@ -27,6 +28,61 @@ const typeColors: Record<string, string> = {
 };
 
 type Props = { params: Promise<{ eventId: string }> };
+
+function getBaseUrl() {
+  return (
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    "https://tellastoryfoundation.org"
+  );
+}
+
+function truncate(value: string, length = 160) {
+  if (value.length <= length) return value;
+  return `${value.slice(0, length - 1).trimEnd()}...`;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { eventId } = await params;
+  const event = await loadPublicEventById(eventId);
+
+  if (!event) {
+    return {
+      title: "Event not found | Tell A Story",
+      description: "This event could not be found.",
+    };
+  }
+
+  const description = truncate(event.description, 170);
+  const url = `${getBaseUrl()}/events/${event.id}`;
+
+  return {
+    title: `${event.title} | Tell A Story`,
+    description,
+    alternates: {
+      canonical: `/events/${event.id}`,
+    },
+    openGraph: {
+      type: "article",
+      title: event.title,
+      description,
+      url,
+      images: [
+        {
+          url: event.image,
+          alt: event.title,
+        },
+      ],
+      siteName: "Tell A Story",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: event.title,
+      description,
+      images: [event.image],
+    },
+  };
+}
 
 export default async function EventDetailPage({ params }: Props) {
   const { eventId } = await params;
@@ -205,7 +261,7 @@ export default async function EventDetailPage({ params }: Props) {
           >
             <MessageCircle size={16} /> Need help? Chat on WhatsApp
           </a>
-          <ShareButton title={event.title} />
+          <ShareButton title={event.title} description={event.description} />
         </div>
       </div>
     </MobileShell>
