@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           height: 630,
         },
         {
-          url: `${getBaseUrl()}/TAS.svg`,
+          url: `${getBaseUrl()}/TAS2.svg`,
           alt: "TAS logo",
         },
       ],

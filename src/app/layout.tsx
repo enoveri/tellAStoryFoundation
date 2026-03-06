@@ -26,22 +26,22 @@ export const metadata: Metadata = {
   },
   description: "Mobile-first storytelling platform UI for the Tell A Story NGO",
   icons: {
-    icon: "/TAS.svg",
-    shortcut: "/TAS.svg",
-    apple: "/TAS.svg",
+    icon: "/TAS2.svg",
+    shortcut: "/TAS2.svg",
+    apple: "/TAS2.svg",
   },
   openGraph: {
     siteName: "TAS | Tell A Story",
     images: [
       {
-        url: "/TAS.svg",
+        url: "/TAS2.svg",
         alt: "TAS logo",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/TAS.svg"],
+    images: ["/TAS2.svg"],
   },
 };
 

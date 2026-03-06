@@ -63,7 +63,7 @@ export async function generateMetadata({
           height: 630,
         },
         {
-          url: `${getBaseUrl()}/TAS.svg`,
+          url: `${getBaseUrl()}/TAS2.svg`,
           alt: "TAS logo",
         },
       ],
