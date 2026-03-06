@@ -76,7 +76,7 @@ export default function ProfilePage() {
             className="rounded-full px-5 py-2 text-sm font-semibold"
             style={{ background: "var(--primary)", color: "var(--primary-fg)" }}
             onClick={async () => {
-              const result = await signInWithGoogle("/profile");
+              const result = await signInWithGoogle();
               if (result.error) {
                 setAuthError(result.error);
               }
