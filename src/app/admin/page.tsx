@@ -162,7 +162,7 @@ export default async function AdminPage() {
               icon={CalendarDays}
               value={overview.eventsCount}
               label="Events"
-              href="/events"
+              href="/admin/events"
             />
           </div>
         </section>
@@ -202,9 +202,9 @@ export default async function AdminPage() {
           />
           <Action
             icon={CalendarDays}
-            label="View Events"
-            description="Upcoming workshops &amp; webinars"
-            href="/events"
+            label="Manage Events"
+            description="Create events and review applicants"
+            href="/admin/events"
           />
         </section>
 

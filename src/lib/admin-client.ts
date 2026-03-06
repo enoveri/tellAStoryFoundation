@@ -1,8 +1,31 @@
 "use client";
 
-import { blogs, users } from "@/lib/mock-data";
+import { blogs, events as mockEvents, users } from "@/lib/mock-data";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import type { Blog, User } from "@/lib/types";
+
+export type AdminEvent = {
+  id: string;
+  title: string;
+  description: string;
+  eventLocation: string;
+  startsAt: string;
+  endsAt: string | null;
+  coverImageUrl: string;
+  isActive: boolean;
+  applicantsCount: number;
+};
+
+export type EventApplicant = {
+  id: string;
+  userId: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+  organisation?: string;
+  notes?: string;
+  createdAt: string;
+};
 
 function formatDate(value: string | null): string {
   if (!value) return "Recently";
@@ -146,4 +169,165 @@ export async function setUserSuspended(userId: string, suspend: boolean) {
   }
 
   return { error: null };
+}
+
+function toIsoDate(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return new Date().toISOString();
+  return date.toISOString();
+}
+
+export async function fetchAdminEvents(): Promise<AdminEvent[]> {
+  try {
+    const supabase = createSupabaseBrowserClient();
+    const { data, error } = await supabase
+      .from("events")
+      .select(
+        "id, title, description, event_location, starts_at, ends_at, cover_image_url, is_active",
+      )
+      .order("starts_at", { ascending: true })
+      .returns<
+        Array<{
+          id: string;
+          title: string;
+          description: string;
+          event_location: string | null;
+          starts_at: string;
+          ends_at: string | null;
+          cover_image_url: string | null;
+          is_active: boolean;
+        }>
+      >();
+
+    if (error || !data) {
+      return mockEvents.map((event) => ({
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        eventLocation: event.location,
+        startsAt: toIsoDate(`${event.date} ${event.time}`),
+        endsAt: null,
+        coverImageUrl: event.image,
+        isActive: true,
+        applicantsCount: 0,
+      }));
+    }
+
+    const { data: applications } = await supabase
+      .from("event_applications")
+      .select("event_id")
+      .returns<Array<{ event_id: string }>>();
+
+    const counts = (applications || []).reduce<Record<string, number>>(
+      (acc, row) => {
+        acc[row.event_id] = (acc[row.event_id] || 0) + 1;
+        return acc;
+      },
+      {},
+    );
+
+    return data.map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      eventLocation: item.event_location || "",
+      startsAt: item.starts_at,
+      endsAt: item.ends_at,
+      coverImageUrl: item.cover_image_url || "",
+      isActive: item.is_active,
+      applicantsCount: counts[item.id] || 0,
+    }));
+  } catch {
+    return mockEvents.map((event) => ({
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      eventLocation: event.location,
+      startsAt: toIsoDate(`${event.date} ${event.time}`),
+      endsAt: null,
+      coverImageUrl: event.image,
+      isActive: true,
+      applicantsCount: 0,
+    }));
+  }
+}
+
+export async function saveAdminEvent(input: {
+  id?: string;
+  title: string;
+  description: string;
+  eventLocation: string;
+  startsAt: string;
+  endsAt?: string;
+  coverImageUrl?: string;
+  isActive: boolean;
+}) {
+  const supabase = createSupabaseBrowserClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const payload = {
+    title: input.title,
+    description: input.description,
+    event_location: input.eventLocation || null,
+    starts_at: new Date(input.startsAt).toISOString(),
+    ends_at: input.endsAt ? new Date(input.endsAt).toISOString() : null,
+    cover_image_url: input.coverImageUrl || null,
+    is_active: input.isActive,
+    created_by: user?.id || null,
+  };
+
+  const mutation = input.id
+    ? supabase.from("events").update(payload).eq("id", input.id)
+    : supabase.from("events").insert(payload);
+
+  const { error } = await mutation;
+  return { error: error?.message || null };
+}
+
+export async function deleteAdminEvent(eventId: string) {
+  const supabase = createSupabaseBrowserClient();
+  const { error } = await supabase.from("events").delete().eq("id", eventId);
+  return { error: error?.message || null };
+}
+
+export async function fetchEventApplicants(
+  eventId: string,
+): Promise<EventApplicant[]> {
+  const supabase = createSupabaseBrowserClient();
+  const { data, error } = await supabase
+    .from("event_applications")
+    .select(
+      "id, user_id, full_name, email, phone, organisation, notes, created_at",
+    )
+    .eq("event_id", eventId)
+    .order("created_at", { ascending: false })
+    .returns<
+      Array<{
+        id: string;
+        user_id: string;
+        full_name: string;
+        email: string;
+        phone: string | null;
+        organisation: string | null;
+        notes: string | null;
+        created_at: string;
+      }>
+    >();
+
+  if (error || !data) {
+    return [];
+  }
+
+  return data.map((item) => ({
+    id: item.id,
+    userId: item.user_id,
+    fullName: item.full_name,
+    email: item.email,
+    phone: item.phone || undefined,
+    organisation: item.organisation || undefined,
+    notes: item.notes || undefined,
+    createdAt: item.created_at,
+  }));
 }

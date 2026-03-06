@@ -13,6 +13,7 @@ import { MobileShell } from "@/components/shared/mobile-shell";
 import { loadPublicEventById } from "@/lib/public-content-store";
 import { cn } from "@/lib/utils";
 import { ShareButton } from "./share-button";
+import { EventRegistrationForm } from "./event-registration-form";
 
 const typeColors: Record<string, string> = {
   workshop: "bg-violet-100 text-violet-700",
@@ -188,15 +189,17 @@ export default async function EventDetailPage({ params }: Props) {
         </div>
 
         {/* CTA */}
+        <EventRegistrationForm eventId={event.id} eventTitle={event.title} />
+
         <div className="space-y-3 px-4">
           <a
             href="https://wa.me/256700277374"
             target="_blank"
             rel="noopener noreferrer"
             className="flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold shadow-sm transition hover:opacity-90"
-            style={{ background: "var(--primary)", color: "var(--primary-fg)" }}
+            style={{ background: "var(--primary-light)", color: "var(--primary)" }}
           >
-            <MessageCircle size={16} /> Register via WhatsApp
+            <MessageCircle size={16} /> Need help? Chat on WhatsApp
           </a>
           <ShareButton title={event.title} />
         </div>

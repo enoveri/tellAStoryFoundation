@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ChevronLeft,
@@ -13,14 +13,19 @@ import {
 import { MobileShell } from "@/components/shared/mobile-shell";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useAbout } from "@/context/about-context";
-import type {
-  AboutData,
-  GalleryImage,
-  Partner,
-  PartnershipType,
-  TeamMember,
+import {
+  uploadAboutImageAsset,
+  uploadAboutGalleryImage,
+  type AboutData,
+  type GalleryImage,
+  type Partner,
+  type PartnershipType,
+  type TeamMember,
 } from "@/lib/about-store";
 import { cn } from "@/lib/utils";
+import type {
+  ChangeEvent,
+} from "react";
 
 // ─── Reusable primitives ──────────────────────────────────────────────────────
 
@@ -218,6 +223,12 @@ function TeamEditor({
 }) {
   const { saved, flash } = useSaved();
   const { update } = useAbout();
+  const [uploadingMemberId, setUploadingMemberId] = useState<string | null>(
+    null,
+  );
+  const [uploadErrorByMember, setUploadErrorByMember] = useState<
+    Record<string, string>
+  >({});
 
   const addMember = () => {
     const member: TeamMember = {
@@ -238,6 +249,28 @@ function TeamEditor({
 
   const removeMember = (id: string) => {
     onChange({ ...draft, team: draft.team.filter((m) => m.id !== id) });
+  };
+
+  const uploadMemberAvatar = async (memberId: string, file: File) => {
+    setUploadingMemberId(memberId);
+    setUploadErrorByMember((prev) => {
+      const next = { ...prev };
+      delete next[memberId];
+      return next;
+    });
+
+    const { url, error } = await uploadAboutImageAsset(file, "team");
+    setUploadingMemberId(null);
+
+    if (error || !url) {
+      setUploadErrorByMember((prev) => ({
+        ...prev,
+        [memberId]: error || "Avatar upload failed.",
+      }));
+      return;
+    }
+
+    updateMember(memberId, "img", url);
   };
 
   return (
@@ -278,6 +311,41 @@ function TeamEditor({
             value={m.img}
             onChange={(v) => updateMember(m.id, "img", v)}
           />
+          <div className="space-y-1">
+            <label
+              className="text-xs font-semibold uppercase tracking-wide"
+              style={{ color: "var(--muted)" }}
+            >
+              Upload avatar
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) {
+                  void uploadMemberAvatar(m.id, file);
+                }
+                event.currentTarget.value = "";
+              }}
+              className="w-full rounded-xl border px-3 py-2 text-sm"
+              style={{
+                borderColor: "var(--border)",
+                background: "var(--background)",
+                color: "var(--foreground)",
+              }}
+            />
+            {uploadingMemberId === m.id ? (
+              <p className="text-[11px]" style={{ color: "var(--muted)" }}>
+                Uploading avatar...
+              </p>
+            ) : null}
+            {uploadErrorByMember[m.id] ? (
+              <p className="text-[11px]" style={{ color: "#ef4444" }}>
+                {uploadErrorByMember[m.id]}
+              </p>
+            ) : null}
+          </div>
         </div>
       ))}
       <button
@@ -309,6 +377,10 @@ function GalleryEditor({
   const { update } = useAbout();
   const [newSrc, setNewSrc] = useState("");
   const [newAlt, setNewAlt] = useState("");
+  const [newFile, setNewFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const addImage = () => {
     if (!newSrc.trim()) return;
@@ -320,6 +392,41 @@ function GalleryEditor({
     onChange({ ...draft, gallery: [...draft.gallery, img] });
     setNewSrc("");
     setNewAlt("");
+  };
+
+  const onFilePicked = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null;
+    setNewFile(file);
+    setUploadError(null);
+  };
+
+  const uploadAndAddImage = async () => {
+    if (!newFile) return;
+
+    setIsUploading(true);
+    setUploadError(null);
+
+    const { url, error } = await uploadAboutGalleryImage(newFile);
+    setIsUploading(false);
+
+    if (error || !url) {
+      setUploadError(error || "Image upload failed.");
+      return;
+    }
+
+    const img: GalleryImage = {
+      id: nanoid(),
+      src: url,
+      alt: newAlt.trim() || newFile.name || "Gallery image",
+    };
+
+    onChange({ ...draft, gallery: [...draft.gallery, img] });
+    setNewFile(null);
+    setNewAlt("");
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const removeImage = (id: string) =>
@@ -375,8 +482,46 @@ function GalleryEditor({
         >
           Add image
         </p>
+        <div className="space-y-1">
+          <label
+            className="text-xs font-semibold uppercase tracking-wide"
+            style={{ color: "var(--muted)" }}
+          >
+            Upload image
+          </label>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={onFilePicked}
+            className="w-full rounded-xl border px-3 py-2 text-sm"
+            style={{
+              borderColor: "var(--border)",
+              background: "var(--background)",
+              color: "var(--foreground)",
+            }}
+          />
+          {newFile ? (
+            <p className="text-[11px]" style={{ color: "var(--muted)" }}>
+              Selected: {newFile.name}
+            </p>
+          ) : null}
+        </div>
         <Field label="Image URL" value={newSrc} onChange={setNewSrc} />
         <Field label="Alt text" value={newAlt} onChange={setNewAlt} />
+        <button
+          onClick={() => {
+            void uploadAndAddImage();
+          }}
+          disabled={!newFile || isUploading}
+          className="flex w-full items-center justify-center gap-2 rounded-xl py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
+          style={{
+            background: "var(--primary)",
+            color: "var(--primary-fg)",
+          }}
+        >
+          {isUploading ? "Uploading..." : "Upload and add image"}
+        </button>
         <button
           onClick={addImage}
           className="flex w-full items-center justify-center gap-2 rounded-xl py-2 text-sm font-semibold transition"
@@ -387,6 +532,11 @@ function GalleryEditor({
         >
           <Plus size={14} /> Add to gallery
         </button>
+        {uploadError ? (
+          <p className="text-xs" style={{ color: "#ef4444" }}>
+            {uploadError}
+          </p>
+        ) : null}
       </div>
 
       <SaveBar
@@ -409,6 +559,12 @@ function PartnersEditor({
 }) {
   const { saved, flash } = useSaved();
   const { update } = useAbout();
+  const [uploadingPartnerId, setUploadingPartnerId] = useState<string | null>(
+    null,
+  );
+  const [uploadErrorByPartner, setUploadErrorByPartner] = useState<
+    Record<string, string>
+  >({});
 
   const addPartner = () => {
     const p: Partner = {
@@ -449,6 +605,28 @@ function PartnersEditor({
         pt.id === id ? { ...pt, [key]: val } : pt,
       ),
     });
+
+  const uploadPartnerLogo = async (partnerId: string, file: File) => {
+    setUploadingPartnerId(partnerId);
+    setUploadErrorByPartner((prev) => {
+      const next = { ...prev };
+      delete next[partnerId];
+      return next;
+    });
+
+    const { url, error } = await uploadAboutImageAsset(file, "partner");
+    setUploadingPartnerId(null);
+
+    if (error || !url) {
+      setUploadErrorByPartner((prev) => ({
+        ...prev,
+        [partnerId]: error || "Logo upload failed.",
+      }));
+      return;
+    }
+
+    updatePartner(partnerId, "logo", url);
+  };
 
   return (
     <div className="space-y-5">
@@ -495,6 +673,41 @@ function PartnersEditor({
               value={p.logo}
               onChange={(v) => updatePartner(p.id, "logo", v)}
             />
+            <div className="space-y-1">
+              <label
+                className="text-xs font-semibold uppercase tracking-wide"
+                style={{ color: "var(--muted)" }}
+              >
+                Upload logo
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) {
+                    void uploadPartnerLogo(p.id, file);
+                  }
+                  event.currentTarget.value = "";
+                }}
+                className="w-full rounded-xl border px-3 py-2 text-sm"
+                style={{
+                  borderColor: "var(--border)",
+                  background: "var(--background)",
+                  color: "var(--foreground)",
+                }}
+              />
+              {uploadingPartnerId === p.id ? (
+                <p className="text-[11px]" style={{ color: "var(--muted)" }}>
+                  Uploading logo...
+                </p>
+              ) : null}
+              {uploadErrorByPartner[p.id] ? (
+                <p className="text-[11px]" style={{ color: "#ef4444" }}>
+                  {uploadErrorByPartner[p.id]}
+                </p>
+              ) : null}
+            </div>
           </div>
         ))}
         <button
@@ -579,6 +792,11 @@ export default function AdminAboutPage() {
   const [active, setActive] = useState<SectionId>("hero");
   const [draft, setDraft] = useState(data);
 
+  // Keep draft in sync when context changes externally (e.g. on first hydration)
+  useEffect(() => {
+    setDraft(data);
+  }, [data]);
+
   if (isLoading) {
     return (
       <MobileShell title="Edit About Page" subtitle="Checking access">
@@ -591,11 +809,6 @@ export default function AdminAboutPage() {
       </MobileShell>
     );
   }
-
-  // Keep draft in sync when context changes externally (e.g. on first hydration)
-  useEffect(() => {
-    setDraft(data);
-  }, [data]);
 
   if (!isAdmin) {
     return (

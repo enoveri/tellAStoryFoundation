@@ -317,6 +317,60 @@ export async function loadAboutData(): Promise<AboutData> {
   }
 }
 
+export async function uploadAboutImageAsset(
+  file: File,
+  kind: "gallery" | "team" | "partner" = "gallery",
+): Promise<{
+  url: string | null;
+  error: string | null;
+}> {
+  try {
+    const supabase = createSupabaseBrowserClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { url: null, error: "Please sign in to upload images." };
+    }
+
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const folder =
+      kind === "team"
+        ? "about-team"
+        : kind === "partner"
+          ? "about-partners"
+          : "about-gallery";
+    const objectPath = `${folder}/${user.id}/${Date.now()}-${safeName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("story-media")
+      .upload(objectPath, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (uploadError) {
+      return { url: null, error: `Upload failed: ${uploadError.message}` };
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from("story-media")
+      .getPublicUrl(objectPath);
+
+    return { url: publicUrlData.publicUrl, error: null };
+  } catch {
+    return { url: null, error: "Could not upload image. Please try again." };
+  }
+}
+
+export async function uploadAboutGalleryImage(file: File): Promise<{
+  url: string | null;
+  error: string | null;
+}> {
+  return uploadAboutImageAsset(file, "gallery");
+}
+
 export async function saveAboutData(data: AboutData): Promise<void> {
   const supabase = createSupabaseBrowserClient();
 

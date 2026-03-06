@@ -67,6 +67,18 @@ export type Event = {
   image: string;
 };
 
+export type EventApplication = {
+  id: string;
+  eventId: string;
+  userId: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+  organisation?: string;
+  notes?: string;
+  createdAt: string;
+};
+
 export type Testimonial = {
   id: string;
   name: string;
