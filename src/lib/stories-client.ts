@@ -105,6 +105,7 @@ export async function createStory(input: {
   excerpt: string;
   body: string;
   tag: string;
+  imageFile?: File | null;
 }) {
   const supabase = createSupabaseBrowserClient();
   const {
@@ -115,6 +116,34 @@ export async function createStory(input: {
     return { error: "Please sign in to publish a story.", storyId: null };
   }
 
+  let coverImageUrl: string | null = null;
+
+  if (input.imageFile) {
+    const file = input.imageFile;
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const objectPath = `${user.id}/${Date.now()}-${safeName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("story-media")
+      .upload(objectPath, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (uploadError) {
+      return {
+        error: `Image upload failed: ${uploadError.message}`,
+        storyId: null,
+      };
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from("story-media")
+      .getPublicUrl(objectPath);
+
+    coverImageUrl = publicUrlData.publicUrl;
+  }
+
   const { data: story, error: storyError } = await supabase
     .from("stories")
     .insert({
@@ -122,6 +151,7 @@ export async function createStory(input: {
       title: input.title,
       summary: input.excerpt,
       body: input.body,
+      cover_image_url: coverImageUrl,
       status: "published",
     })
     .select("id")

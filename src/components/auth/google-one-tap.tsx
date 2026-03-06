@@ -14,6 +14,7 @@ declare global {
           initialize: (params: {
             client_id: string;
             callback: (response: { credential: string }) => void;
+            nonce?: string;
             auto_select?: boolean;
             cancel_on_tap_outside?: boolean;
             use_fedcm_for_prompt?: boolean;
@@ -39,12 +40,41 @@ declare global {
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
+function createNonce(length = 32): string {
+  const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const randomValues = new Uint8Array(length);
+  crypto.getRandomValues(randomValues);
+
+  let nonce = "";
+  for (let i = 0; i < randomValues.length; i += 1) {
+    nonce += charset[randomValues[i] % charset.length];
+  }
+
+  return nonce;
+}
+
+async function sha256Base64Url(input: string): Promise<string> {
+  const bytes = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  const binary = String.fromCharCode(...new Uint8Array(digest));
+  const base64 = btoa(binary);
+
+  return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
 export function GoogleOneTap() {
   const { user, isLoading } = useCurrentUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (!googleClientId || isLoading || user) {
+    if (!googleClientId) {
+      console.warn(
+        "[OneTap] Missing NEXT_PUBLIC_GOOGLE_CLIENT_ID. One Tap will not initialize.",
+      );
+      return;
+    }
+
+    if (isLoading || user) {
       return;
     }
 
@@ -80,21 +110,39 @@ export function GoogleOneTap() {
           }
 
           script.onload = () => resolve();
+          script.onerror = () => {
+            console.error("[OneTap] Failed to load Google GSI script.");
+            resolve();
+          };
         });
       }
 
       if (!active || !window.google) {
+        console.info("[OneTap] Google API not available after script load.");
         return;
       }
 
+      const rawNonce = createNonce();
+      const hashedNonce = await sha256Base64Url(rawNonce);
+
       window.google.accounts.id.initialize({
         client_id: googleClientId,
+        nonce: hashedNonce,
         callback: async ({ credential }) => {
-          const result = await signInWithGoogleIdToken(credential);
-          if (!result.error) {
-            router.push("/profile");
-            router.refresh();
+          if (!credential) {
+            console.error("[OneTap] Credential callback returned empty token.");
+            return;
           }
+
+          const result = await signInWithGoogleIdToken(credential, rawNonce);
+          if (result.error) {
+            console.error("[OneTap] Supabase ID token sign-in failed:", result.error);
+            return;
+          }
+
+          console.info("[OneTap] Sign-in successful, redirecting to profile.");
+          router.push("/profile");
+          router.refresh();
         },
         auto_select: true,
         cancel_on_tap_outside: true,
@@ -106,21 +154,21 @@ export function GoogleOneTap() {
       window.google.accounts.id.prompt((notification) => {
         if (notification.isNotDisplayed()) {
           console.info(
-            "Google One Tap not displayed:",
+            "[OneTap] Not displayed:",
             notification.getNotDisplayedReason(),
           );
         }
 
         if (notification.isSkippedMoment()) {
           console.info(
-            "Google One Tap skipped:",
+            "[OneTap] Skipped:",
             notification.getSkippedReason(),
           );
         }
 
         if (notification.isDismissedMoment()) {
           console.info(
-            "Google One Tap dismissed:",
+            "[OneTap] Dismissed:",
             notification.getDismissedReason(),
           );
         }

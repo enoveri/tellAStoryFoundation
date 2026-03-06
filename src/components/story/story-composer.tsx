@@ -1,11 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createStory } from "@/lib/stories-client";
 
 const storySchema = z.object({
@@ -20,6 +21,8 @@ type StoryFormValues = z.infer<typeof storySchema>;
 export function StoryComposer() {
   const router = useRouter();
   const [publishError, setPublishError] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -29,10 +32,18 @@ export function StoryComposer() {
     resolver: zodResolver(storySchema),
   });
 
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
+
   const onSubmit = async (values: StoryFormValues) => {
     setPublishError(null);
 
-    const result = await createStory(values);
+    const result = await createStory({ ...values, imageFile });
     if (result.error) {
       setPublishError(result.error);
       return;
@@ -77,6 +88,41 @@ export function StoryComposer() {
         />
         {errors.tag ? (
           <p className="mt-1 text-xs text-rose-500">{errors.tag.message}</p>
+        ) : null}
+      </div>
+
+      <div>
+        <label className="text-sm font-semibold text-[color:var(--foreground)]">
+          Add a picture (optional)
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          className="mt-1 w-full rounded-xl border border-[color:var(--border)] px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-[color:var(--primary-light)] file:px-3 file:py-1 file:text-xs file:font-semibold file:text-[color:var(--primary)]"
+          onChange={(e) => {
+            const file = e.target.files?.[0] || null;
+            setImageFile(file);
+            setImagePreview((currentPreview) => {
+              if (currentPreview) {
+                URL.revokeObjectURL(currentPreview);
+              }
+              return file ? URL.createObjectURL(file) : null;
+            });
+          }}
+        />
+        <p className="mt-1 text-xs text-[color:var(--muted)]">
+          This image will be used as the story cover.
+        </p>
+        {imagePreview ? (
+          <div className="relative mt-3 h-44 w-full overflow-hidden rounded-xl border border-[color:var(--border)]">
+            <Image
+              src={imagePreview}
+              alt="Selected cover preview"
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          </div>
         ) : null}
       </div>
 
