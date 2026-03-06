@@ -20,8 +20,29 @@ export const metadata: Metadata = {
       process.env.NEXT_PUBLIC_APP_URL ||
       "https://tellastoryfoundation.org",
   ),
-  title: "Tell A Story",
+  title: {
+    default: "TAS | Tell A Story",
+    template: "%s | TAS",
+  },
   description: "Mobile-first storytelling platform UI for the Tell A Story NGO",
+  icons: {
+    icon: "/TAS.svg",
+    shortcut: "/TAS.svg",
+    apple: "/TAS.svg",
+  },
+  openGraph: {
+    siteName: "TAS | Tell A Story",
+    images: [
+      {
+        url: "/TAS.svg",
+        alt: "TAS logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/TAS.svg"],
+  },
 };
 
 export default function RootLayout({

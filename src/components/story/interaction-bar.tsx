@@ -128,7 +128,7 @@ export function InteractionBar({
                 ? truncate(storyExcerpt)
                 : "Read this story";
               await navigator.share({
-                title: storyTitle || "Story",
+                title: `TAS | ${storyTitle || "Story"}`,
                 text: previewText,
                 url: shareUrl,
               });
@@ -142,7 +142,7 @@ export function InteractionBar({
             const previewText = storyExcerpt
               ? truncate(storyExcerpt)
               : "Read this story";
-            const content = `${storyTitle || "Story"}\n${previewText}\n${shareUrl}`;
+            const content = `TAS | ${storyTitle || "Story"}\n${previewText}\n${shareUrl}`;
             await navigator.clipboard.writeText(content);
           }
         }}

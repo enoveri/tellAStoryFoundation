@@ -62,8 +62,12 @@ export async function generateMetadata({
           width: 1200,
           height: 630,
         },
+        {
+          url: `${getBaseUrl()}/TAS.svg`,
+          alt: "TAS logo",
+        },
       ],
-      siteName: "Tell A Story",
+      siteName: "TAS | Tell A Story",
     },
     twitter: {
       card: "summary_large_image",

@@ -28,10 +28,10 @@ export function TopBar({ title, subtitle }: TopBarProps) {
     >
       {/* Logo */}
       <Image
-        src="/tas-logo.png"
+        src="/TAS.svg"
         alt="Tell A Story Foundation"
-        width={72}
-        height={72}
+        width={60}
+        height={60}
         priority
         className="shrink-0"
       />
