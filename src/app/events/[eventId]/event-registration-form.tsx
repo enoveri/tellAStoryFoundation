@@ -103,7 +103,10 @@ export function EventRegistrationForm({
       className="mx-4 space-y-3 rounded-2xl border p-4"
       style={{ borderColor: "var(--border)", background: "var(--card)" }}
     >
-      <h2 className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
+      <h2
+        className="text-sm font-semibold"
+        style={{ color: "var(--foreground)" }}
+      >
         Register for this event
       </h2>
 
@@ -115,7 +118,15 @@ export function EventRegistrationForm({
 
       {!isLoading && !user ? (
         <p className="text-xs" style={{ color: "var(--muted)" }}>
-          Please <Link href="/login" className="font-semibold underline" style={{ color: "var(--primary)" }}>sign in</Link> to register for {eventTitle}.
+          Please{" "}
+          <Link
+            href="/login"
+            className="font-semibold underline"
+            style={{ color: "var(--primary)" }}
+          >
+            sign in
+          </Link>{" "}
+          to register for {eventTitle}.
         </p>
       ) : null}
 
@@ -123,7 +134,8 @@ export function EventRegistrationForm({
         <>
           {alreadyAppliedAt ? (
             <p className="text-xs" style={{ color: "var(--success)" }}>
-              You already applied on {prettyDate(alreadyAppliedAt)}. Update your details below if needed.
+              You already applied on {prettyDate(alreadyAppliedAt)}. Update your
+              details below if needed.
             </p>
           ) : null}
 
@@ -133,7 +145,11 @@ export function EventRegistrationForm({
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Full name"
               className="w-full rounded-xl border px-3 py-2 text-sm"
-              style={{ borderColor: "var(--border)", background: "var(--background)", color: "var(--foreground)" }}
+              style={{
+                borderColor: "var(--border)",
+                background: "var(--background)",
+                color: "var(--foreground)",
+              }}
             />
             <input
               value={email}
@@ -141,21 +157,33 @@ export function EventRegistrationForm({
               type="email"
               placeholder="Email"
               className="w-full rounded-xl border px-3 py-2 text-sm"
-              style={{ borderColor: "var(--border)", background: "var(--background)", color: "var(--foreground)" }}
+              style={{
+                borderColor: "var(--border)",
+                background: "var(--background)",
+                color: "var(--foreground)",
+              }}
             />
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="Phone number"
               className="w-full rounded-xl border px-3 py-2 text-sm"
-              style={{ borderColor: "var(--border)", background: "var(--background)", color: "var(--foreground)" }}
+              style={{
+                borderColor: "var(--border)",
+                background: "var(--background)",
+                color: "var(--foreground)",
+              }}
             />
             <input
               value={organisation}
               onChange={(e) => setOrganisation(e.target.value)}
               placeholder="Organisation (optional)"
               className="w-full rounded-xl border px-3 py-2 text-sm"
-              style={{ borderColor: "var(--border)", background: "var(--background)", color: "var(--foreground)" }}
+              style={{
+                borderColor: "var(--border)",
+                background: "var(--background)",
+                color: "var(--foreground)",
+              }}
             />
             <textarea
               value={notes}
@@ -163,16 +191,24 @@ export function EventRegistrationForm({
               placeholder="Anything we should know?"
               rows={3}
               className="w-full rounded-xl border px-3 py-2 text-sm"
-              style={{ borderColor: "var(--border)", background: "var(--background)", color: "var(--foreground)" }}
+              style={{
+                borderColor: "var(--border)",
+                background: "var(--background)",
+                color: "var(--foreground)",
+              }}
             />
 
             <button
               type="submit"
               disabled={isSubmitting}
               className="flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-sm font-semibold disabled:opacity-50"
-              style={{ background: "var(--primary)", color: "var(--primary-fg)" }}
+              style={{
+                background: "var(--primary)",
+                color: "var(--primary-fg)",
+              }}
             >
-              <Send size={14} /> {isSubmitting ? "Submitting..." : "Submit application"}
+              <Send size={14} />{" "}
+              {isSubmitting ? "Submitting..." : "Submit application"}
             </button>
           </form>
         </>
