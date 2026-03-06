@@ -10,7 +10,7 @@ import {
   Users,
 } from "lucide-react";
 import { MobileShell } from "@/components/shared/mobile-shell";
-import { findEvent } from "@/lib/mock-data";
+import { loadPublicEventById } from "@/lib/public-content-store";
 import { cn } from "@/lib/utils";
 import { ShareButton } from "./share-button";
 
@@ -25,7 +25,7 @@ type Props = { params: Promise<{ eventId: string }> };
 
 export default async function EventDetailPage({ params }: Props) {
   const { eventId } = await params;
-  const event = findEvent(eventId);
+  const event = await loadPublicEventById(eventId);
   if (!event) notFound();
 
   return (

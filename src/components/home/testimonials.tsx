@@ -1,8 +1,12 @@
 import Image from "next/image";
 import { Quote } from "lucide-react";
-import { testimonials } from "@/lib/mock-data";
+import type { Testimonial } from "@/lib/types";
 
-export function Testimonials() {
+type TestimonialsProps = {
+  testimonials: Testimonial[];
+};
+
+export function Testimonials({ testimonials }: TestimonialsProps) {
   return (
     <section className="space-y-3 px-4">
       <h2 className="text-lg font-semibold text-[color:var(--foreground)]">

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays } from "lucide-react";
 import { BlogContent } from "@/components/blog/blog-content";
 import { MobileShell } from "@/components/shared/mobile-shell";
-import { findBlog } from "@/lib/mock-data";
+import { loadPublicBlogBySlug } from "@/lib/public-content-store";
 
 type BlogDetailPageProps = {
   params: Promise<{ slug: string }>;
@@ -12,7 +12,7 @@ type BlogDetailPageProps = {
 
 export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const { slug } = await params;
-  const blog = findBlog(slug);
+  const blog = await loadPublicBlogBySlug(slug);
 
   if (!blog) {
     notFound();

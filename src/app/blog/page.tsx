@@ -1,11 +1,12 @@
 import { MobileShell } from "@/components/shared/mobile-shell";
 import { BlogCard } from "@/components/blog/blog-card";
-import { blogs } from "@/lib/mock-data";
 import { getCurrentUserProfile } from "@/lib/auth";
+import { loadPublicBlogs } from "@/lib/public-content-store";
 import Link from "next/link";
 
 export default async function BlogPage() {
   const currentUser = await getCurrentUserProfile();
+  const blogs = await loadPublicBlogs();
   const isAdmin = currentUser?.role === "admin";
   return (
     <MobileShell

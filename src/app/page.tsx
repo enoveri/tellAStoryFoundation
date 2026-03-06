@@ -7,9 +7,21 @@ import { StoryCard } from "@/components/story/story-card";
 import { UpcomingEvents } from "@/components/home/upcoming-events";
 import { Testimonials } from "@/components/home/testimonials";
 import { ContactHome } from "@/components/home/contact-home";
-import { stories, blogs } from "@/lib/mock-data";
+import {
+  loadHomeBlogs,
+  loadHomeEvents,
+  loadHomeTestimonials,
+} from "@/lib/home-store";
+import { loadStories } from "@/lib/stories-store";
 
-export default function Home() {
+export default async function Home() {
+  const [stories, blogs, events, testimonials] = await Promise.all([
+    loadStories(),
+    loadHomeBlogs(6),
+    loadHomeEvents(6),
+    loadHomeTestimonials(8),
+  ]);
+
   return (
     <MobileShell title="Home" subtitle="Welcome to Tell A Story">
       <section className="space-y-6">
@@ -31,7 +43,7 @@ export default function Home() {
           ))}
         </section>
 
-        <UpcomingEvents />
+        <UpcomingEvents events={events} />
 
         {/* Blog previews */}
         <section className="space-y-3 px-4">
@@ -89,7 +101,7 @@ export default function Home() {
           </div>
         </section>
 
-        <Testimonials />
+        <Testimonials testimonials={testimonials} />
 
         <ContactHome />
       </section>

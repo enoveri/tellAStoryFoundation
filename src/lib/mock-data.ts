@@ -219,14 +219,6 @@ export function findStory(storyId: string) {
   return stories.find((story) => story.id === storyId);
 }
 
-export function findBlog(slug: string) {
-  return blogs.find((blog) => blog.slug === slug);
-}
-
-export function findEvent(eventId: string) {
-  return events.find((event) => event.id === eventId);
-}
-
 export const events: Event[] = [
   {
     id: "e1",

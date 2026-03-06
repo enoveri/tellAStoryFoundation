@@ -7,8 +7,8 @@ import {
   ArrowRight,
   UserPlus,
 } from "lucide-react";
-import { events } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import type { Event } from "@/lib/types";
 
 const typeColors: Record<string, string> = {
   workshop: "bg-violet-100 text-violet-700",
@@ -17,7 +17,11 @@ const typeColors: Record<string, string> = {
   fundraiser: "bg-amber-100  text-amber-700",
 };
 
-export function UpcomingEvents() {
+type UpcomingEventsProps = {
+  events: Event[];
+};
+
+export function UpcomingEvents({ events }: UpcomingEventsProps) {
   return (
     <section className="space-y-3 px-4">
       <div className="flex items-center justify-between">

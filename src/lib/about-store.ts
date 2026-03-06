@@ -211,6 +211,49 @@ function loadLocalFallback() {
   }
 }
 
+function mergeAboutRows(input: {
+  aboutPage: AboutPageRow;
+  pillars: AboutPillarRow[] | null;
+  team: AboutTeamRow[] | null;
+  gallery: AboutGalleryRow[] | null;
+  partners: AboutPartnerRow[] | null;
+  partnershipTypes: AboutPartnershipTypeRow[] | null;
+}): AboutData {
+  return {
+    heroTitle: input.aboutPage.hero_title,
+    heroSubtitle: input.aboutPage.hero_subtitle,
+    pillars:
+      input.pillars?.map((p) => ({ title: p.title, body: p.body })) ??
+      defaultAboutData.pillars,
+    team:
+      input.team?.map((m) => ({
+        id: m.id,
+        name: m.name,
+        role: m.role_title,
+        img: m.avatar_url || "",
+      })) ?? defaultAboutData.team,
+    gallery:
+      input.gallery?.map((g) => ({
+        id: g.id,
+        src: g.image_url,
+        alt: g.alt_text || "Gallery image",
+      })) ?? defaultAboutData.gallery,
+    partners:
+      input.partners?.map((p) => ({
+        id: p.id,
+        name: p.name,
+        kind: p.kind || "Partner",
+        logo: p.logo_url || "",
+      })) ?? defaultAboutData.partners,
+    partnershipTypes:
+      input.partnershipTypes?.map((pt) => ({
+        id: pt.id,
+        title: pt.title,
+        body: pt.body,
+      })) ?? defaultAboutData.partnershipTypes,
+  };
+}
+
 export async function loadAboutData(): Promise<AboutData> {
   try {
     const supabase = createSupabaseBrowserClient();
@@ -258,39 +301,14 @@ export async function loadAboutData(): Promise<AboutData> {
           .returns<AboutPartnershipTypeRow[]>(),
       ]);
 
-    const merged: AboutData = {
-      heroTitle: aboutPage.hero_title,
-      heroSubtitle: aboutPage.hero_subtitle,
-      pillars:
-        pillarsRes.data?.map((p) => ({ title: p.title, body: p.body })) ??
-        defaultAboutData.pillars,
-      team:
-        teamRes.data?.map((m) => ({
-          id: m.id,
-          name: m.name,
-          role: m.role_title,
-          img: m.avatar_url || "",
-        })) ?? defaultAboutData.team,
-      gallery:
-        galleryRes.data?.map((g) => ({
-          id: g.id,
-          src: g.image_url,
-          alt: g.alt_text || "Gallery image",
-        })) ?? defaultAboutData.gallery,
-      partners:
-        partnersRes.data?.map((p) => ({
-          id: p.id,
-          name: p.name,
-          kind: p.kind || "Partner",
-          logo: p.logo_url || "",
-        })) ?? defaultAboutData.partners,
-      partnershipTypes:
-        partnershipTypesRes.data?.map((pt) => ({
-          id: pt.id,
-          title: pt.title,
-          body: pt.body,
-        })) ?? defaultAboutData.partnershipTypes,
-    };
+    const merged = mergeAboutRows({
+      aboutPage,
+      pillars: pillarsRes.data || null,
+      team: teamRes.data || null,
+      gallery: galleryRes.data || null,
+      partners: partnersRes.data || null,
+      partnershipTypes: partnershipTypesRes.data || null,
+    });
 
     saveLocalFallback(merged);
     return merged;
