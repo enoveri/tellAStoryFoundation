@@ -27,6 +27,24 @@ function truncate(value: string, length = 170) {
   return `${value.slice(0, length - 1).trimEnd()}...`;
 }
 
+function buildSocialImageUrl(rawImageUrl?: string | null) {
+  if (!rawImageUrl) {
+    return `${getBaseUrl()}/TAS2.svg`;
+  }
+
+  // Supabase object URLs can be large originals; use render endpoint for a crawler-friendly preview size.
+  if (rawImageUrl.includes("/storage/v1/object/public/")) {
+    const rendered = rawImageUrl.replace(
+      "/storage/v1/object/public/",
+      "/storage/v1/render/image/public/",
+    );
+    const separator = rendered.includes("?") ? "&" : "?";
+    return `${rendered}${separator}width=1200&height=630&resize=cover&quality=85`;
+  }
+
+  return rawImageUrl;
+}
+
 export async function generateMetadata({
   params,
 }: StoryDetailPageProps): Promise<Metadata> {
@@ -41,7 +59,7 @@ export async function generateMetadata({
   }
 
   const description = truncate(story.excerpt || story.body || "Community story");
-  const image = story.images?.[0] || story.image;
+  const image = buildSocialImageUrl(story.images?.[0] || story.image);
   const url = `${getBaseUrl()}/stories/${story.id}`;
 
   return {
@@ -61,10 +79,6 @@ export async function generateMetadata({
           alt: story.title,
           width: 1200,
           height: 630,
-        },
-        {
-          url: `${getBaseUrl()}/TAS2.svg`,
-          alt: "TAS logo",
         },
       ],
       siteName: "TAS | Tell A Story",

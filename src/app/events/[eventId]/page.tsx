@@ -42,6 +42,23 @@ function truncate(value: string, length = 160) {
   return `${value.slice(0, length - 1).trimEnd()}...`;
 }
 
+function buildSocialImageUrl(rawImageUrl?: string | null) {
+  if (!rawImageUrl) {
+    return `${getBaseUrl()}/TAS2.svg`;
+  }
+
+  if (rawImageUrl.includes("/storage/v1/object/public/")) {
+    const rendered = rawImageUrl.replace(
+      "/storage/v1/object/public/",
+      "/storage/v1/render/image/public/",
+    );
+    const separator = rendered.includes("?") ? "&" : "?";
+    return `${rendered}${separator}width=1200&height=630&resize=cover&quality=85`;
+  }
+
+  return rawImageUrl;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { eventId } = await params;
   const event = await loadPublicEventById(eventId);
@@ -55,6 +72,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const description = truncate(event.description, 170);
   const url = `${getBaseUrl()}/events/${event.id}`;
+  const image = buildSocialImageUrl(event.image);
 
   return {
     title: `${event.title} | Tell A Story`,
@@ -69,14 +87,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url,
       images: [
         {
-          url: event.image,
+          url: image,
           alt: event.title,
           width: 1200,
           height: 630,
-        },
-        {
-          url: `${getBaseUrl()}/TAS2.svg`,
-          alt: "TAS logo",
         },
       ],
       siteName: "TAS | Tell A Story",
@@ -85,7 +99,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       title: event.title,
       description,
-      images: [event.image],
+      images: [image],
     },
   };
 }
