@@ -6,10 +6,14 @@ import { loadPublicEvents } from "@/lib/public-content-store";
 import { cn } from "@/lib/utils";
 
 const typeColors: Record<string, string> = {
-  workshop: "bg-violet-100 text-violet-700",
-  webinar: "bg-[color:var(--primary-light)] text-[color:var(--primary)]",
-  community: "bg-[color:var(--success-subtle)] text-[color:var(--success)]",
-  fundraiser: "bg-amber-100 text-amber-700",
+  workshop:
+    "bg-[color:var(--badge-workshop-bg)] text-[color:var(--badge-workshop-text)]",
+  webinar:
+    "bg-[color:var(--badge-webinar-bg)] text-[color:var(--badge-webinar-text)]",
+  community:
+    "bg-[color:var(--badge-community-bg)] text-[color:var(--badge-community-text)]",
+  fundraiser:
+    "bg-[color:var(--badge-fundraiser-bg)] text-[color:var(--badge-fundraiser-text)]",
 };
 
 export default async function EventsPage() {

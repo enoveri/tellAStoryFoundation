@@ -47,7 +47,10 @@ function SlideHero() {
   return (
     <div className="flex h-full flex-col justify-between p-5">
       <div>
-        <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--primary-text)]">
+        <div
+          className="mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--primary-text)]"
+          style={{ background: "var(--overlay-surface)" }}
+        >
           <HeartHandshake size={13} /> Tell A Story NGO
         </div>
         <h2 className="text-2xl font-bold leading-snug text-[color:var(--foreground)]">
@@ -69,7 +72,8 @@ function SlideHero() {
         </Link>
         <Link
           href="/write"
-          className="inline-flex rounded-full border border-[color:var(--primary)] bg-white/60 px-4 py-2 text-sm font-semibold text-[color:var(--primary-text)] hover:bg-white/80"
+          className="inline-flex rounded-full border border-[color:var(--primary)] px-4 py-2 text-sm font-semibold text-[color:var(--primary-text)]"
+          style={{ background: "var(--overlay-surface)" }}
         >
           Write yours
         </Link>
@@ -123,7 +127,8 @@ function SlideStats() {
         {stats.map(({ icon: Icon, value, label }) => (
           <div
             key={label}
-            className="flex flex-col items-center rounded-2xl bg-white/60 py-3 px-2 text-center shadow-sm"
+            className="flex flex-col items-center rounded-2xl py-3 px-2 text-center shadow-sm"
+            style={{ background: "var(--overlay-surface)" }}
           >
             <Icon size={18} className="mb-1 text-[color:var(--primary)]" />
             <span className="text-xl font-extrabold text-[color:var(--primary)]">
@@ -192,22 +197,22 @@ function SlideFounder() {
 const slides = [
   {
     id: "hero",
-    bg: "from-sky-200 via-cyan-100 to-slate-100",
+    bg: "var(--hero-gradient-1)",
     Component: SlideHero,
   },
   {
     id: "gallery",
-    bg: "from-violet-100 via-purple-50 to-white",
+    bg: "var(--hero-gradient-2)",
     Component: SlideGallery,
   },
   {
     id: "stats",
-    bg: "from-emerald-100 via-teal-50 to-sky-50",
+    bg: "var(--hero-gradient-3)",
     Component: SlideStats,
   },
   {
     id: "founder",
-    bg: "from-amber-50 via-orange-50 to-white",
+    bg: "var(--hero-gradient-4)",
     Component: SlideFounder,
   },
 ];
@@ -248,11 +253,8 @@ export function HeroCarousel() {
 
   return (
     <div
-      className={cn(
-        "relative overflow-hidden rounded-3xl bg-gradient-to-br",
-        bg,
-      )}
-      style={{ minHeight: 260 }}
+      className={cn("relative overflow-hidden rounded-3xl")}
+      style={{ minHeight: 260, backgroundImage: bg }}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >

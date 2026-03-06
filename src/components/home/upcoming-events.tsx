@@ -11,10 +11,14 @@ import { cn } from "@/lib/utils";
 import type { Event } from "@/lib/types";
 
 const typeColors: Record<string, string> = {
-  workshop: "bg-violet-100 text-violet-700",
-  webinar: "bg-sky-100    text-sky-700",
-  community: "bg-emerald-100 text-emerald-700",
-  fundraiser: "bg-amber-100  text-amber-700",
+  workshop:
+    "bg-[color:var(--badge-workshop-bg)] text-[color:var(--badge-workshop-text)]",
+  webinar:
+    "bg-[color:var(--badge-webinar-bg)] text-[color:var(--badge-webinar-text)]",
+  community:
+    "bg-[color:var(--badge-community-bg)] text-[color:var(--badge-community-text)]",
+  fundraiser:
+    "bg-[color:var(--badge-fundraiser-bg)] text-[color:var(--badge-fundraiser-text)]",
 };
 
 type UpcomingEventsProps = {
