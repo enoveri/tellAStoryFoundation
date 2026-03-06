@@ -1,12 +1,22 @@
 import Image from "next/image";
+import { Heart } from "lucide-react";
 import type { Reply, User } from "@/lib/types";
 
 type ReplyItemProps = {
   reply: Reply;
   user?: User;
+  likes: number;
+  liked: boolean;
+  onLike: () => void;
 };
 
-export function ReplyItem({ reply, user }: ReplyItemProps) {
+export function ReplyItem({
+  reply,
+  user,
+  likes,
+  liked,
+  onLike,
+}: ReplyItemProps) {
   const name = reply.userName || user?.name || "Anonymous";
   const avatar =
     reply.userAvatar || user?.avatar || "https://i.pravatar.cc/100";
@@ -31,6 +41,17 @@ export function ReplyItem({ reply, user }: ReplyItemProps) {
       <p className="text-sm text-[color:var(--foreground)]/90">
         {reply.content}
       </p>
+      <button
+        type="button"
+        onClick={onLike}
+        className="mt-2 inline-flex items-center gap-1 text-xs text-[color:var(--muted)]"
+      >
+        <Heart
+          size={12}
+          className={liked ? "fill-current text-[color:var(--primary)]" : ""}
+        />
+        {likes}
+      </button>
     </article>
   );
 }

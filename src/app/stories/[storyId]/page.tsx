@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, CalendarDays } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { MobileShell } from "@/components/shared/mobile-shell";
 import { CommentThread } from "@/components/story/comment-thread";
 import { CommentComposer } from "@/components/story/comment-composer";
@@ -41,13 +42,13 @@ export default async function StoryDetailPage({
         </Link>
       </div>
 
-      <article className="space-y-4 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-4 shadow-sm">
+      <article className="space-y-4 border-y border-[color:var(--border)] bg-[color:var(--card)] p-4 shadow-sm">
         {/* Story images */}
-        <div className="space-y-3">
+        <div className="-mx-4 space-y-3">
           {storyImages.map((imageUrl, index) => (
             <div
               key={`${imageUrl}-${index}`}
-              className="overflow-hidden rounded-xl border border-[color:var(--border)] bg-black/5"
+              className="overflow-hidden border-y border-[color:var(--border)] bg-black/5"
             >
               <Image
                 src={imageUrl}
@@ -106,14 +107,16 @@ export default async function StoryDetailPage({
         )}
 
         {/* Body */}
-        <p className="whitespace-pre-line text-sm leading-7 text-[color:var(--foreground)]/90">
-          {story.body}
-        </p>
+        <div className="prose prose-sm max-w-none text-[color:var(--foreground)]/90">
+          <ReactMarkdown>{story.body}</ReactMarkdown>
+        </div>
 
         <InteractionBar
           storyId={story.id}
           initialLikes={story.likes}
           commentsCount={story.commentsCount ?? story.comments.length}
+          storyTitle={story.title}
+          storyExcerpt={story.excerpt}
         />
       </article>
 
@@ -125,7 +128,7 @@ export default async function StoryDetailPage({
           </span>
         </h3>
         <CommentComposer storyId={story.id} />
-        <CommentThread comments={story.comments} />
+        <CommentThread storyId={story.id} comments={story.comments} />
       </section>
     </MobileShell>
   );

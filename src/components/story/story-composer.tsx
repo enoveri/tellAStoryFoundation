@@ -6,31 +6,56 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Bold, Heading2, Italic, List } from "lucide-react";
 import { createStory } from "@/lib/stories-client";
 
 const storySchema = z.object({
-  title: z.string().min(8, "Title should be at least 8 characters"),
-  tag: z.string().min(2, "Add a short tag"),
-  excerpt: z.string().min(20, "Give a short intro"),
-  body: z.string().min(80, "Tell us a bit more of your story"),
+  title: z.string().min(1, "Title is required"),
+  tag: z.string().min(1, "Add a short tag"),
+  excerpt: z.string().min(1, "Give a short intro"),
+  body: z.string().min(1, "Tell us a bit more of your story"),
 });
 
 type StoryFormValues = z.infer<typeof storySchema>;
 
-export function StoryComposer() {
+type StoryComposerProps = {
+  initialStory?: {
+    id: string;
+    title: string;
+    excerpt: string;
+    body: string;
+    tag: string;
+    status: "draft" | "published";
+  };
+};
+
+export function StoryComposer({ initialStory }: StoryComposerProps) {
   const router = useRouter();
   const [publishError, setPublishError] = useState<string | null>(null);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [submitMode, setSubmitMode] = useState<"draft" | "published">(
+    initialStory?.status || "published",
+  );
+  const bodyRef = useRef<HTMLTextAreaElement | null>(null);
   const {
     register,
     handleSubmit,
+    setValue,
+    getValues,
     reset,
     formState: { errors, isSubmitSuccessful, isSubmitting },
   } = useForm<StoryFormValues>({
     resolver: zodResolver(storySchema),
+    defaultValues: {
+      title: initialStory?.title || "",
+      tag: initialStory?.tag || "",
+      excerpt: initialStory?.excerpt || "",
+      body: initialStory?.body || "",
+    },
   });
+  const bodyField = register("body");
 
   useEffect(() => {
     return () => {
@@ -38,17 +63,75 @@ export function StoryComposer() {
     };
   }, [imagePreviews]);
 
+  const wrapSelection = (prefix: string, suffix = prefix) => {
+    const textarea = bodyRef.current;
+    const current = getValues("body");
+
+    if (!textarea) {
+      setValue("body", `${current}\n${prefix}text${suffix}`);
+      return;
+    }
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selected = current.slice(start, end) || "text";
+    const next = `${current.slice(0, start)}${prefix}${selected}${suffix}${current.slice(end)}`;
+
+    setValue("body", next, { shouldDirty: true, shouldTouch: true });
+  };
+
+  const applyLinePrefix = (prefix: string) => {
+    const current = getValues("body");
+    const next = `${current}\n${prefix} `;
+    setValue("body", next.trimStart(), {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+  };
+
   const onSubmit = async (values: StoryFormValues) => {
     setPublishError(null);
 
-    const result = await createStory({ ...values, imageFiles });
+    if (submitMode === "published") {
+      if (values.title.trim().length < 8) {
+        setPublishError(
+          "Title should be at least 8 characters before publishing.",
+        );
+        return;
+      }
+
+      if (values.excerpt.trim().length < 20) {
+        setPublishError(
+          "Give a short intro of at least 20 characters before publishing.",
+        );
+        return;
+      }
+
+      if (values.body.trim().length < 80) {
+        setPublishError(
+          "Story body should be at least 80 characters before publishing.",
+        );
+        return;
+      }
+    }
+
+    const result = await createStory({
+      storyId: initialStory?.id,
+      ...values,
+      imageFiles,
+      status: submitMode,
+    });
     if (result.error) {
       setPublishError(result.error);
       return;
     }
 
     if (result.storyId) {
-      router.push(`/stories/${result.storyId}`);
+      if (submitMode === "draft") {
+        router.push("/profile");
+      } else {
+        router.push(`/stories/${result.storyId}`);
+      }
       router.refresh();
       return;
     }
@@ -103,13 +186,16 @@ export function StoryComposer() {
             setImageFiles(files);
 
             setImagePreviews((currentPreviews) => {
-              currentPreviews.forEach((preview) => URL.revokeObjectURL(preview));
+              currentPreviews.forEach((preview) =>
+                URL.revokeObjectURL(preview),
+              );
               return files.map((file) => URL.createObjectURL(file));
             });
           }}
         />
         <p className="mt-1 text-xs text-[color:var(--muted)]">
-          The first image becomes the cover. All selected images appear inside the story.
+          The first image becomes the cover. All selected images appear inside
+          the story.
         </p>
         {imagePreviews.length > 0 ? (
           <div className="mt-3 grid grid-cols-2 gap-2">
@@ -155,8 +241,46 @@ export function StoryComposer() {
         <label className="text-sm font-semibold text-[color:var(--foreground)]">
           Your story
         </label>
+        <div className="mb-2 mt-1 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => wrapSelection("**")}
+            className="rounded-lg border border-[color:var(--border)] px-2 py-1 text-xs"
+            title="Bold"
+          >
+            <Bold size={14} />
+          </button>
+          <button
+            type="button"
+            onClick={() => wrapSelection("*")}
+            className="rounded-lg border border-[color:var(--border)] px-2 py-1 text-xs"
+            title="Italic"
+          >
+            <Italic size={14} />
+          </button>
+          <button
+            type="button"
+            onClick={() => applyLinePrefix("##")}
+            className="rounded-lg border border-[color:var(--border)] px-2 py-1 text-xs"
+            title="Heading"
+          >
+            <Heading2 size={14} />
+          </button>
+          <button
+            type="button"
+            onClick={() => applyLinePrefix("-")}
+            className="rounded-lg border border-[color:var(--border)] px-2 py-1 text-xs"
+            title="List"
+          >
+            <List size={14} />
+          </button>
+        </div>
         <textarea
-          {...register("body")}
+          {...bodyField}
+          ref={(el) => {
+            bodyField.ref(el);
+            bodyRef.current = el;
+          }}
           rows={8}
           placeholder="Share your story from the heart..."
           className="mt-1 w-full rounded-xl border border-[color:var(--border)] px-3 py-2 text-sm outline-none ring-[color:var(--border)] placeholder:text-[color:var(--muted)] focus:ring"
@@ -166,13 +290,26 @@ export function StoryComposer() {
         ) : null}
       </div>
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full rounded-xl bg-[color:var(--primary)] px-4 py-2 text-sm font-semibold text-[color:var(--primary-fg)] shadow-sm transition hover:bg-[color:var(--primary-dark)]"
-      >
-        {isSubmitting ? "Publishing..." : "Publish story"}
-      </button>
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          onClick={() => setSubmitMode("draft")}
+          className="w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2 text-sm font-semibold text-[color:var(--foreground)] shadow-sm transition"
+        >
+          {isSubmitting && submitMode === "draft" ? "Saving..." : "Save draft"}
+        </button>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          onClick={() => setSubmitMode("published")}
+          className="w-full rounded-xl bg-[color:var(--primary)] px-4 py-2 text-sm font-semibold text-[color:var(--primary-fg)] shadow-sm transition hover:bg-[color:var(--primary-dark)]"
+        >
+          {isSubmitting && submitMode === "published"
+            ? "Publishing..."
+            : "Publish story"}
+        </button>
+      </div>
 
       {publishError ? (
         <p className="rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">

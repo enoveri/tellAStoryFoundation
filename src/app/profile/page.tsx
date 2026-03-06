@@ -3,13 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Settings,
   LogOut,
   ShieldCheck,
   PenSquare,
   BookOpen,
+  Bookmark,
   Heart,
   ChevronRight,
   Info,
@@ -18,7 +19,12 @@ import { MobileShell } from "@/components/shared/mobile-shell";
 import { StoryCard } from "@/components/story/story-card";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { signInWithGoogle, signOutUser } from "@/lib/auth-client";
-import { stories } from "@/lib/mock-data";
+import {
+  createStory,
+  deleteStory,
+  fetchMyStories,
+  type ManagedStory,
+} from "@/lib/stories-client";
 
 // ─── Role badge ───────────────────────────────────────────────────────────────
 
@@ -50,6 +56,21 @@ export default function ProfilePage() {
   const { user, isLoading } = useCurrentUser();
   const router = useRouter();
   const [authError, setAuthError] = useState<string | null>(null);
+  const [myStories, setMyStories] = useState<ManagedStory[]>([]);
+  const [storiesLoading, setStoriesLoading] = useState(true);
+
+  useEffect(() => {
+    if (isLoading || !user) {
+      return;
+    }
+
+    void (async () => {
+      setStoriesLoading(true);
+      const rows = await fetchMyStories();
+      setMyStories(rows);
+      setStoriesLoading(false);
+    })();
+  }, [isLoading, user]);
 
   if (isLoading) {
     return (
@@ -94,8 +115,7 @@ export default function ProfilePage() {
 
   const isAdmin = user.role === "admin";
 
-  const myStories = stories.filter((s) => s.authorId === user.id);
-  const totalLikes = myStories.reduce((sum, s) => sum + s.likes, 0);
+  const totalLikes = 0;
 
   return (
     <MobileShell title="Profile" subtitle={user.name}>
@@ -248,8 +268,88 @@ export default function ProfilePage() {
               + Write new
             </Link>
           </div>
-          {myStories.length > 0 ? (
-            myStories.map((story) => <StoryCard key={story.id} story={story} />)
+          {storiesLoading ? (
+            <div
+              className="rounded-2xl border border-dashed p-6 text-center text-sm"
+              style={{ borderColor: "var(--border)", color: "var(--muted)" }}
+            >
+              Loading your stories...
+            </div>
+          ) : myStories.length > 0 ? (
+            myStories.map((story) => (
+              <div key={story.id} className="space-y-2">
+                <StoryCard
+                  story={{
+                    id: story.id,
+                    authorId: user.id,
+                    author: user,
+                    title: story.title,
+                    excerpt: story.summary,
+                    body: story.body,
+                    image:
+                      story.coverImageUrl ||
+                      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1200&h=800&fit=crop",
+                    tags: story.tag ? [story.tag] : [],
+                    likes: 0,
+                    comments: [],
+                    commentsCount: 0,
+                    createdAt: new Date(story.createdAt).toLocaleDateString(),
+                    status: story.status,
+                  }}
+                  menuActions={[
+                    {
+                      label: "Edit",
+                      onClick: () => {
+                        router.push(`/write?storyId=${story.id}`);
+                      },
+                    },
+                    {
+                      label:
+                        story.status === "published"
+                          ? "Move to Draft"
+                          : "Publish",
+                      onClick: async () => {
+                        const result = await createStory({
+                          storyId: story.id,
+                          title: story.title,
+                          excerpt: story.summary,
+                          body: story.body,
+                          tag: story.tag,
+                          imageFiles: [],
+                          status:
+                            story.status === "published"
+                              ? "draft"
+                              : "published",
+                        });
+
+                        if (result.error) {
+                          setAuthError(result.error);
+                          return;
+                        }
+
+                        setMyStories(await fetchMyStories());
+                      },
+                    },
+                    {
+                      label: "Delete",
+                      tone: "danger",
+                      onClick: async () => {
+                        const result = await deleteStory(story.id);
+                        if (result.error) {
+                          setAuthError(result.error);
+                          return;
+                        }
+
+                        setMyStories(await fetchMyStories());
+                      },
+                    },
+                  ]}
+                />
+                <span className="inline-block rounded-full bg-[color:var(--primary-subtle)] px-2 py-0.5 text-[10px] font-semibold uppercase text-[color:var(--muted)]">
+                  {story.status}
+                </span>
+              </div>
+            ))
           ) : (
             <div
               className="rounded-2xl border border-dashed p-6 text-center text-sm"
@@ -269,6 +369,23 @@ export default function ProfilePage() {
 
         {/* ── Settings shortcut ─────────────────────────────────────── */}
         <section className="px-4 pb-2">
+          <Link
+            href="/saved"
+            className="mb-3 flex items-center justify-between rounded-2xl border p-4"
+            style={{ borderColor: "var(--border)", background: "var(--card)" }}
+          >
+            <div className="flex items-center gap-3">
+              <Bookmark size={18} style={{ color: "var(--primary)" }} />
+              <span
+                className="text-sm font-medium"
+                style={{ color: "var(--foreground)" }}
+              >
+                Saved Stories
+              </span>
+            </div>
+            <ChevronRight size={16} style={{ color: "var(--muted)" }} />
+          </Link>
+
           <Link
             href="/profile/settings"
             className="flex items-center justify-between rounded-2xl border p-4"

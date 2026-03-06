@@ -15,6 +15,7 @@ export type Reply = {
   createdAt: string;
   userName?: string;
   userAvatar?: string;
+  likes?: number;
 };
 
 export type Comment = {
@@ -25,6 +26,7 @@ export type Comment = {
   replies: Reply[];
   userName?: string;
   userAvatar?: string;
+  likes?: number;
 };
 
 export type Story = {
@@ -36,6 +38,7 @@ export type Story = {
   body: string;
   image: string;
   images?: string[];
+  status?: "draft" | "published" | "archived";
   tags: string[];
   likes: number;
   commentsCount?: number;
