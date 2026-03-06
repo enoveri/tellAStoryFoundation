@@ -71,6 +71,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         {
           url: event.image,
           alt: event.title,
+          width: 1200,
+          height: 630,
         },
       ],
       siteName: "Tell A Story",

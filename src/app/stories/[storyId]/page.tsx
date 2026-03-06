@@ -59,6 +59,8 @@ export async function generateMetadata({
         {
           url: image,
           alt: story.title,
+          width: 1200,
+          height: 630,
         },
       ],
       siteName: "Tell A Story",
