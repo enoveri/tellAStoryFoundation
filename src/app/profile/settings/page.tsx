@@ -206,7 +206,7 @@ export default function SettingsPage() {
           className="px-4 text-center text-xs"
           style={{ color: "var(--muted)" }}
         >
-          Authentication via Google Sign-In — coming soon.
+          Account is linked via Supabase Auth (Google).
         </p>
       </div>
     </MobileShell>

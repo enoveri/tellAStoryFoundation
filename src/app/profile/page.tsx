@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import {
   Settings,
   LogOut,
@@ -15,6 +17,7 @@ import {
 import { MobileShell } from "@/components/shared/mobile-shell";
 import { StoryCard } from "@/components/story/story-card";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { signInWithGoogle, signOutUser } from "@/lib/auth-client";
 import { stories } from "@/lib/mock-data";
 
 // ─── Role badge ───────────────────────────────────────────────────────────────
@@ -45,6 +48,8 @@ function RoleBadge({ role }: { role?: string }) {
 
 export default function ProfilePage() {
   const { user, isLoading } = useCurrentUser();
+  const router = useRouter();
+  const [authError, setAuthError] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -66,7 +71,22 @@ export default function ProfilePage() {
           className="p-8 text-center text-sm"
           style={{ color: "var(--muted)" }}
         >
-          Please sign in to view your profile.
+          <p>Please sign in to view your profile.</p>
+          <button
+            className="rounded-full px-5 py-2 text-sm font-semibold"
+            style={{ background: "var(--primary)", color: "var(--primary-fg)" }}
+            onClick={async () => {
+              const result = await signInWithGoogle("/profile");
+              if (result.error) {
+                setAuthError(result.error);
+              }
+            }}
+          >
+            Continue with Google
+          </button>
+          {authError ? (
+            <p className="text-xs text-rose-600">{authError}</p>
+          ) : null}
         </div>
       </MobileShell>
     );
@@ -162,13 +182,25 @@ export default function ProfilePage() {
                 borderColor: "var(--inverse-border)",
                 color: "var(--inverse-fg)",
               }}
-              onClick={() =>
-                alert("Sign-out will work once Google Auth is connected.")
-              }
+              onClick={async () => {
+                const result = await signOutUser();
+                if (result.error) {
+                  setAuthError(result.error);
+                  return;
+                }
+
+                router.push("/");
+                router.refresh();
+              }}
             >
               <LogOut size={14} />
             </button>
           </div>
+          {authError ? (
+            <p className="mt-3 text-xs" style={{ color: "#fca5a5" }}>
+              {authError}
+            </p>
+          ) : null}
         </section>
 
         {/* ── Admin panel entry ─────────────────────────────────────── */}

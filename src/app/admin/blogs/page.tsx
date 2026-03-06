@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ChevronLeft, PenSquare, Trash2, Eye } from "lucide-react";
 import { MobileShell } from "@/components/shared/mobile-shell";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { fetchAdminBlogs } from "@/lib/admin-client";
+import { deleteAdminBlog, fetchAdminBlogs } from "@/lib/admin-client";
 import type { Blog } from "@/lib/types";
 
 export default function AdminBlogsPage() {
@@ -14,6 +14,8 @@ export default function AdminBlogsPage() {
   const isAdmin = user?.role === "admin";
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [isBlogsLoading, setIsBlogsLoading] = useState(true);
+  const [status, setStatus] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -37,6 +39,30 @@ export default function AdminBlogsPage() {
       mounted = false;
     };
   }, [isAdmin]);
+
+  const reloadBlogs = async () => {
+    const nextBlogs = await fetchAdminBlogs();
+    setBlogs(nextBlogs);
+  };
+
+  const handleDelete = async (blog: Blog) => {
+    const ok = confirm(`Delete blog \"${blog.title}\"?`);
+    if (!ok) return;
+
+    setPendingDelete(blog.id);
+    setStatus(null);
+    const result = await deleteAdminBlog(blog.id);
+
+    if (result.error) {
+      setStatus(`Delete failed: ${result.error}`);
+      setPendingDelete(null);
+      return;
+    }
+
+    await reloadBlogs();
+    setPendingDelete(null);
+    setStatus("Blog deleted successfully.");
+  };
 
   if (isLoading) {
     return (
@@ -87,6 +113,15 @@ export default function AdminBlogsPage() {
   return (
     <MobileShell title="Manage Blogs" subtitle={`${blogs.length} published`}>
       <div className="space-y-4">
+        {status ? (
+          <div
+            className="mx-4 rounded-xl border px-3 py-2 text-xs"
+            style={{ borderColor: "var(--border)", color: "var(--muted)" }}
+          >
+            {status}
+          </div>
+        ) : null}
+
         {/* Back + New */}
         <div className="flex items-center justify-between px-4 pt-1">
           <Link
@@ -177,13 +212,15 @@ export default function AdminBlogsPage() {
                     <PenSquare size={12} /> Edit
                   </Link>
                   <button
+                    disabled={pendingDelete === blog.id}
                     className="flex flex-1 items-center justify-center gap-1.5 rounded-full py-2 text-xs font-semibold transition"
                     style={{ background: "#fff1f2", color: "#e11d48" }}
-                    onClick={() =>
-                      alert("Delete will work once backend is connected.")
-                    }
+                    onClick={() => {
+                      void handleDelete(blog);
+                    }}
                   >
-                    <Trash2 size={12} /> Delete
+                    <Trash2 size={12} />
+                    {pendingDelete === blog.id ? "Deleting..." : "Delete"}
                   </button>
                 </div>
               </div>

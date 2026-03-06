@@ -3,10 +3,6 @@ const requiredPublicEnv = {
   supabasePublishableKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
 };
 
-const requiredServerEnv = {
-  supabaseDbUrl: process.env.SUPABASE_DB_URL,
-};
-
 function assertEnv(name: string, value: string | undefined): string {
   if (!value) {
     throw new Error(`Missing required environment variable: ${name}`);
@@ -27,5 +23,13 @@ export const env = {
 };
 
 export const serverEnv = {
-  supabaseDbUrl: assertEnv("SUPABASE_DB_URL", requiredServerEnv.supabaseDbUrl),
+  get supabaseDbUrl() {
+    if (typeof window !== "undefined") {
+      throw new Error(
+        "SUPABASE_DB_URL is server-only and cannot be read in the browser",
+      );
+    }
+
+    return assertEnv("SUPABASE_DB_URL", process.env.SUPABASE_DB_URL);
+  },
 };

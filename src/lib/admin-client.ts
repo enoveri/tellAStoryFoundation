@@ -74,7 +74,7 @@ export async function fetchAdminUsers(): Promise<User[]> {
     const supabase = createSupabaseBrowserClient();
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, full_name, avatar_url, role, bio, created_at")
+      .select("id, full_name, avatar_url, role, bio, created_at, is_suspended")
       .order("created_at", { ascending: false })
       .returns<
         Array<{
@@ -84,6 +84,7 @@ export async function fetchAdminUsers(): Promise<User[]> {
           role: "admin" | "member" | "ngo" | null;
           bio: string | null;
           created_at: string | null;
+          is_suspended: boolean | null;
         }>
       >();
 
@@ -98,8 +99,51 @@ export async function fetchAdminUsers(): Promise<User[]> {
       role: item.role || "member",
       bio: item.bio || undefined,
       joinedAt: formatJoinedAt(item.created_at),
+      isSuspended: item.is_suspended ?? false,
     }));
   } catch {
     return users;
   }
+}
+
+export async function deleteAdminBlog(blogId: string) {
+  const supabase = createSupabaseBrowserClient();
+  const { error } = await supabase.from("blog_posts").delete().eq("id", blogId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { error: null };
+}
+
+export async function promoteUserToAdmin(userId: string) {
+  const supabase = createSupabaseBrowserClient();
+  const { error } = await supabase
+    .from("profiles")
+    .update({ role: "admin" })
+    .eq("id", userId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { error: null };
+}
+
+export async function setUserSuspended(userId: string, suspend: boolean) {
+  const supabase = createSupabaseBrowserClient();
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      is_suspended: suspend,
+      suspended_at: suspend ? new Date().toISOString() : null,
+    })
+    .eq("id", userId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { error: null };
 }

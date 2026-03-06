@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { GoogleOneTap } from "@/components/auth/google-one-tap";
 import { AboutProvider } from "@/context/about-context";
 import "./globals.css";
 
@@ -28,7 +29,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-[color:var(--background)] text-[color:var(--foreground)] antialiased`}
       >
-        <AboutProvider>{children}</AboutProvider>
+        <AboutProvider>
+          <GoogleOneTap />
+          {children}
+        </AboutProvider>
       </body>
     </html>
   );

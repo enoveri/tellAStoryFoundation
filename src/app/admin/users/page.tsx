@@ -12,7 +12,11 @@ import {
   MoreVertical,
 } from "lucide-react";
 import { MobileShell } from "@/components/shared/mobile-shell";
-import { fetchAdminUsers } from "@/lib/admin-client";
+import {
+  fetchAdminUsers,
+  promoteUserToAdmin,
+  setUserSuspended,
+} from "@/lib/admin-client";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import type { User } from "@/lib/types";
 
@@ -45,6 +49,8 @@ export default function AdminUsersPage() {
   const [actionUser, setActionUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [isUsersLoading, setIsUsersLoading] = useState(true);
+  const [status, setStatus] = useState<string | null>(null);
+  const [pendingUserId, setPendingUserId] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -68,6 +74,59 @@ export default function AdminUsersPage() {
       mounted = false;
     };
   }, [isAdmin]);
+
+  const reloadUsers = async () => {
+    const nextUsers = await fetchAdminUsers();
+    setUsers(nextUsers);
+  };
+
+  const handlePromote = async (target: User) => {
+    const ok = confirm(`Promote ${target.name} to admin?`);
+    if (!ok) return;
+
+    setPendingUserId(target.id);
+    setStatus(null);
+    const result = await promoteUserToAdmin(target.id);
+
+    if (result.error) {
+      setStatus(`Action failed: ${result.error}`);
+      setPendingUserId(null);
+      return;
+    }
+
+    await reloadUsers();
+    setPendingUserId(null);
+    setActionUser(null);
+    setStatus(`${target.name} is now an admin.`);
+  };
+
+  const handleSuspendToggle = async (target: User) => {
+    const suspend = !target.isSuspended;
+    const ok = confirm(
+      suspend ? `Suspend ${target.name}?` : `Unsuspend ${target.name}?`,
+    );
+
+    if (!ok) return;
+
+    setPendingUserId(target.id);
+    setStatus(null);
+    const result = await setUserSuspended(target.id, suspend);
+
+    if (result.error) {
+      setStatus(`Action failed: ${result.error}`);
+      setPendingUserId(null);
+      return;
+    }
+
+    await reloadUsers();
+    setPendingUserId(null);
+    setActionUser(null);
+    setStatus(
+      suspend
+        ? `${target.name} was suspended.`
+        : `${target.name} was unsuspended.`,
+    );
+  };
 
   if (isLoading) {
     return (
@@ -124,6 +183,15 @@ export default function AdminUsersPage() {
   return (
     <MobileShell title="Manage Users" subtitle={`${users.length} registered`}>
       <div className="space-y-4">
+        {status ? (
+          <div
+            className="mx-4 rounded-xl border px-3 py-2 text-xs"
+            style={{ borderColor: "var(--border)", color: "var(--muted)" }}
+          >
+            {status}
+          </div>
+        ) : null}
+
         {/* Back */}
         <div className="px-4 pt-1">
           <Link
@@ -198,6 +266,14 @@ export default function AdminUsersPage() {
                     {u.name}
                   </p>
                   <RoleBadge role={u.role} />
+                  {u.isSuspended ? (
+                    <span
+                      className="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
+                      style={{ background: "#fee2e2", color: "#991b1b" }}
+                    >
+                      Suspended
+                    </span>
+                  ) : null}
                 </div>
                 <p className="text-xs" style={{ color: "var(--muted)" }}>
                   {u.bio ?? "No bio"} · {u.joinedAt}
@@ -224,10 +300,10 @@ export default function AdminUsersPage() {
                 >
                   {u.role !== "admin" && (
                     <button
+                      disabled={pendingUserId === u.id}
                       className="flex items-center gap-2 px-4 py-2.5 text-sm hover:opacity-70"
                       onClick={() => {
-                        alert(`Make ${u.name} admin (coming with auth)`);
-                        setActionUser(null);
+                        void handlePromote(u);
                       }}
                       style={{ color: "var(--foreground)" }}
                     >
@@ -235,14 +311,15 @@ export default function AdminUsersPage() {
                     </button>
                   )}
                   <button
+                    disabled={pendingUserId === u.id}
                     className="flex items-center gap-2 px-4 py-2.5 text-sm hover:opacity-70"
                     onClick={() => {
-                      alert(`Suspend ${u.name} (coming with auth)`);
-                      setActionUser(null);
+                      void handleSuspendToggle(u);
                     }}
                     style={{ color: "var(--foreground)" }}
                   >
-                    <UserX size={14} /> Suspend
+                    <UserX size={14} />
+                    {u.isSuspended ? "Unsuspend" : "Suspend"}
                   </button>
                   <button
                     className="flex items-center gap-2 px-4 py-2.5 text-sm hover:opacity-70"
@@ -269,8 +346,7 @@ export default function AdminUsersPage() {
           className="px-4 pb-2 text-center text-xs"
           style={{ color: "var(--muted)" }}
         >
-          Full user management (suspend, promote, delete) active once auth is
-          connected.
+          User management updates are applied directly to Supabase.
         </p>
       </div>
     </MobileShell>

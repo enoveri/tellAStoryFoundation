@@ -111,7 +111,7 @@ export function CommentComposer({ storyId }: { storyId?: string }) {
             color: "var(--success-text)",
           }}
         >
-          Comment posted! (UI demo — will persist once auth is connected.)
+          Comment posted successfully.
         </p>
       )}
     </form>

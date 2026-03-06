@@ -5,6 +5,7 @@ export type User = {
   bio?: string;
   joinedAt?: string;
   role?: "member" | "ngo" | "admin";
+  isSuspended?: boolean;
 };
 
 export type Reply = {
