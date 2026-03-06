@@ -43,8 +43,10 @@ function truncate(value: string, length = 160) {
 }
 
 function buildSocialImageUrl(rawImageUrl?: string | null) {
+  const baseUrl = getBaseUrl();
+
   if (!rawImageUrl) {
-    return `${getBaseUrl()}/TAS2.svg`;
+    return `${baseUrl}/api/og-image?src=${encodeURIComponent(`${baseUrl}/TAS2.svg`)}`;
   }
 
   if (rawImageUrl.includes("/storage/v1/object/public/")) {
@@ -53,10 +55,11 @@ function buildSocialImageUrl(rawImageUrl?: string | null) {
       "/storage/v1/render/image/public/",
     );
     const separator = rendered.includes("?") ? "&" : "?";
-    return `${rendered}${separator}width=1200&height=630&resize=cover&quality=85`;
+    const optimized = `${rendered}${separator}width=1200&height=630&resize=cover&quality=85`;
+    return `${baseUrl}/api/og-image?src=${encodeURIComponent(optimized)}`;
   }
 
-  return rawImageUrl;
+  return `${baseUrl}/api/og-image?src=${encodeURIComponent(rawImageUrl)}`;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
