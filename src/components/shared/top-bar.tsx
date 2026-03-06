@@ -14,7 +14,7 @@ type TopBarProps = {
 
 export function TopBar({ title, subtitle }: TopBarProps) {
   const dir = useScrollDirection();
-  const { user } = useCurrentUser();
+  const { user, isLoading } = useCurrentUser();
 
   const userName = user?.name || "Profile";
   const userAvatar = user?.avatar || "https://i.pravatar.cc/100";
@@ -62,16 +62,26 @@ export function TopBar({ title, subtitle }: TopBarProps) {
         <Info size={13} /> About
       </Link>
 
-      {/* Profile avatar */}
-      <Link href="/profile" className="shrink-0" title={userName}>
-        <Image
-          src={userAvatar}
-          alt={userName}
-          width={34}
-          height={34}
-          className="rounded-full border-2 border-[color:var(--primary-mid)] object-cover"
-        />
-      </Link>
+      {/* Auth / profile */}
+      {isLoading ? null : user ? (
+        <Link href="/profile" className="shrink-0" title={userName}>
+          <Image
+            src={userAvatar}
+            alt={userName}
+            width={34}
+            height={34}
+            className="rounded-full border-2 border-[color:var(--primary-mid)] object-cover"
+          />
+        </Link>
+      ) : (
+        <Link
+          href="/login"
+          className="shrink-0 rounded-full border px-3 py-1 text-xs font-semibold"
+          style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+        >
+          Login
+        </Link>
+      )}
     </header>
   );
 }

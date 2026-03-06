@@ -32,6 +32,41 @@ export async function signInWithGoogleIdToken(idToken: string) {
   return { error: error?.message || null };
 }
 
+export async function signInWithEmail(input: {
+  email: string;
+  password: string;
+}) {
+  const supabase = createSupabaseBrowserClient();
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email: input.email,
+    password: input.password,
+  });
+
+  return { error: error?.message || null };
+}
+
+export async function signUpWithEmail(input: {
+  email: string;
+  password: string;
+  fullName?: string;
+}) {
+  const supabase = createSupabaseBrowserClient();
+
+  const { error } = await supabase.auth.signUp({
+    email: input.email,
+    password: input.password,
+    options: {
+      emailRedirectTo: `${window.location.origin}/auth/callback`,
+      data: {
+        full_name: input.fullName || undefined,
+      },
+    },
+  });
+
+  return { error: error?.message || null };
+}
+
 export async function signOutUser() {
   const supabase = createSupabaseBrowserClient();
   const { error } = await supabase.auth.signOut();
