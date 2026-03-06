@@ -35,6 +35,12 @@ type StoryTagRow = {
   tag: string;
 };
 
+type StoryImageRow = {
+  story_id: string;
+  image_url: string;
+  sort_order: number;
+};
+
 function toRelativeTime(dateValue: string): string {
   const date = new Date(dateValue);
   const diffMs = Date.now() - date.getTime();
@@ -65,7 +71,12 @@ function mapAuthor(authorId: string, profile: StoryRow["profiles"]): User {
   };
 }
 
-function mapStoryRow(row: StoryRow, tags: string[] = []): Story {
+function mapStoryRow(row: StoryRow, tags: string[] = [], images: string[] = []): Story {
+  const coverImage =
+    row.cover_image_url ||
+    images[0] ||
+    "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1200&h=800&fit=crop";
+
   return {
     id: row.id,
     authorId: row.author_id,
@@ -73,9 +84,8 @@ function mapStoryRow(row: StoryRow, tags: string[] = []): Story {
     title: row.title,
     excerpt: row.summary || row.body.slice(0, 120),
     body: row.body,
-    image:
-      row.cover_image_url ||
-      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1200&h=800&fit=crop",
+    image: coverImage,
+    images: images.length > 0 ? images : [coverImage],
     tags,
     likes: row.like_count ?? 0,
     commentsCount: row.comment_count ?? 0,
@@ -125,6 +135,7 @@ function mapComments(rows: CommentRow[]): Comment[] {
 function mapMockStories(): Story[] {
   return mockStories.map((story) => ({
     ...story,
+    images: story.images?.length ? story.images : [story.image],
     commentsCount: story.comments.length,
   }));
 }
@@ -159,7 +170,27 @@ export async function loadStories(): Promise<Story[]> {
       tagsByStory.set(row.story_id, existing);
     });
 
-    return data.map((row) => mapStoryRow(row, tagsByStory.get(row.id) || []));
+    const { data: storyImageRows } = await supabase
+      .from("story_images")
+      .select("story_id, image_url, sort_order")
+      .in("story_id", storyIds)
+      .order("sort_order", { ascending: true })
+      .returns<StoryImageRow[]>();
+
+    const imagesByStory = new Map<string, string[]>();
+    (storyImageRows || []).forEach((row) => {
+      const existing = imagesByStory.get(row.story_id) || [];
+      existing.push(row.image_url);
+      imagesByStory.set(row.story_id, existing);
+    });
+
+    return data.map((row) =>
+      mapStoryRow(
+        row,
+        tagsByStory.get(row.id) || [],
+        imagesByStory.get(row.id) || [],
+      ),
+    );
   } catch {
     return mapMockStories();
   }
@@ -198,9 +229,17 @@ export async function loadStoryById(
       .eq("story_id", storyId)
       .returns<StoryTagRow[]>();
 
+    const { data: storyImageRows } = await supabase
+      .from("story_images")
+      .select("story_id, image_url, sort_order")
+      .eq("story_id", storyId)
+      .order("sort_order", { ascending: true })
+      .returns<StoryImageRow[]>();
+
     const comments = commentRows ? mapComments(commentRows) : [];
     const storyTags = (tagRows || []).map((row) => row.tag);
-    const story = mapStoryRow(storyRow, storyTags);
+    const storyImages = (storyImageRows || []).map((row) => row.image_url);
+    const story = mapStoryRow(storyRow, storyTags, storyImages);
 
     return {
       ...story,

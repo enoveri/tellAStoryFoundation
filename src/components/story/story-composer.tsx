@@ -21,8 +21,8 @@ type StoryFormValues = z.infer<typeof storySchema>;
 export function StoryComposer() {
   const router = useRouter();
   const [publishError, setPublishError] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const {
     register,
     handleSubmit,
@@ -34,16 +34,14 @@ export function StoryComposer() {
 
   useEffect(() => {
     return () => {
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
-      }
+      imagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
     };
-  }, [imagePreview]);
+  }, [imagePreviews]);
 
   const onSubmit = async (values: StoryFormValues) => {
     setPublishError(null);
 
-    const result = await createStory({ ...values, imageFile });
+    const result = await createStory({ ...values, imageFiles });
     if (result.error) {
       setPublishError(result.error);
       return;
@@ -93,35 +91,47 @@ export function StoryComposer() {
 
       <div>
         <label className="text-sm font-semibold text-[color:var(--foreground)]">
-          Add a picture (optional)
+          Add pictures (optional)
         </label>
         <input
           type="file"
           accept="image/*"
+          multiple
           className="mt-1 w-full rounded-xl border border-[color:var(--border)] px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-[color:var(--primary-light)] file:px-3 file:py-1 file:text-xs file:font-semibold file:text-[color:var(--primary)]"
           onChange={(e) => {
-            const file = e.target.files?.[0] || null;
-            setImageFile(file);
-            setImagePreview((currentPreview) => {
-              if (currentPreview) {
-                URL.revokeObjectURL(currentPreview);
-              }
-              return file ? URL.createObjectURL(file) : null;
+            const files = Array.from(e.target.files || []);
+            setImageFiles(files);
+
+            setImagePreviews((currentPreviews) => {
+              currentPreviews.forEach((preview) => URL.revokeObjectURL(preview));
+              return files.map((file) => URL.createObjectURL(file));
             });
           }}
         />
         <p className="mt-1 text-xs text-[color:var(--muted)]">
-          This image will be used as the story cover.
+          The first image becomes the cover. All selected images appear inside the story.
         </p>
-        {imagePreview ? (
-          <div className="relative mt-3 h-44 w-full overflow-hidden rounded-xl border border-[color:var(--border)]">
-            <Image
-              src={imagePreview}
-              alt="Selected cover preview"
-              fill
-              className="object-cover"
-              unoptimized
-            />
+        {imagePreviews.length > 0 ? (
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            {imagePreviews.map((preview, index) => (
+              <div
+                key={preview}
+                className="relative h-36 overflow-hidden rounded-xl border border-[color:var(--border)]"
+              >
+                <Image
+                  src={preview}
+                  alt={`Selected story image ${index + 1}`}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+                {index === 0 ? (
+                  <span className="absolute left-2 top-2 rounded-full bg-black/65 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                    Cover
+                  </span>
+                ) : null}
+              </div>
+            ))}
           </div>
         ) : null}
       </div>

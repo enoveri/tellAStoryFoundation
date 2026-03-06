@@ -23,6 +23,7 @@ export default async function StoryDetailPage({
   }
 
   const author = story.author;
+  const storyImages = story.images?.length ? story.images : [story.image];
 
   return (
     <MobileShell
@@ -41,15 +42,23 @@ export default async function StoryDetailPage({
       </div>
 
       <article className="space-y-4 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-4 shadow-sm">
-        {/* Cover */}
-        <div className="relative h-52 overflow-hidden rounded-xl">
-          <Image
-            src={story.image}
-            alt={story.title}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 420px"
-          />
+        {/* Story images */}
+        <div className="space-y-3">
+          {storyImages.map((imageUrl, index) => (
+            <div
+              key={`${imageUrl}-${index}`}
+              className="overflow-hidden rounded-xl border border-[color:var(--border)] bg-black/5"
+            >
+              <Image
+                src={imageUrl}
+                alt={`${story.title} image ${index + 1}`}
+                width={1600}
+                height={1000}
+                className="h-auto w-full object-contain"
+                sizes="(max-width: 768px) 100vw, 720px"
+              />
+            </div>
+          ))}
         </div>
 
         {/* Tags */}

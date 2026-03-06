@@ -105,7 +105,7 @@ export async function createStory(input: {
   excerpt: string;
   body: string;
   tag: string;
-  imageFile?: File | null;
+  imageFiles?: File[];
 }) {
   const supabase = createSupabaseBrowserClient();
   const {
@@ -116,12 +116,11 @@ export async function createStory(input: {
     return { error: "Please sign in to publish a story.", storyId: null };
   }
 
-  let coverImageUrl: string | null = null;
+  const imageUrls: string[] = [];
 
-  if (input.imageFile) {
-    const file = input.imageFile;
+  for (const [index, file] of (input.imageFiles || []).entries()) {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-    const objectPath = `${user.id}/${Date.now()}-${safeName}`;
+    const objectPath = `${user.id}/${Date.now()}-${index}-${safeName}`;
 
     const { error: uploadError } = await supabase.storage
       .from("story-media")
@@ -141,8 +140,10 @@ export async function createStory(input: {
       .from("story-media")
       .getPublicUrl(objectPath);
 
-    coverImageUrl = publicUrlData.publicUrl;
+    imageUrls.push(publicUrlData.publicUrl);
   }
+
+  const coverImageUrl = imageUrls[0] || null;
 
   const { data: story, error: storyError } = await supabase
     .from("stories")
@@ -162,6 +163,23 @@ export async function createStory(input: {
       error: storyError?.message || "Failed to publish story.",
       storyId: null,
     };
+  }
+
+  if (imageUrls.length > 0) {
+    const { error: storyImagesError } = await supabase.from("story_images").insert(
+      imageUrls.map((imageUrl, index) => ({
+        story_id: story.id,
+        image_url: imageUrl,
+        sort_order: index,
+      })),
+    );
+
+    if (storyImagesError) {
+      return {
+        error: `Story published but gallery failed to save: ${storyImagesError.message}`,
+        storyId: story.id,
+      };
+    }
   }
 
   const normalizedTag = input.tag.trim().toLowerCase();

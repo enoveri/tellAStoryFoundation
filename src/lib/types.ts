@@ -35,6 +35,7 @@ export type Story = {
   excerpt: string;
   body: string;
   image: string;
+  images?: string[];
   tags: string[];
   likes: number;
   commentsCount?: number;
